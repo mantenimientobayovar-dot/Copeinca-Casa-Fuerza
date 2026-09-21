@@ -1,0 +1,3878 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COPEINCA - Control Operacional</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+:root {
+  /* Paleta Corporativa COPEINCA Mejorada */
+  --primary-color: #00363B;
+  --primary-hover: #00616B;
+  --secondary-color: #00616B;
+  --accent-color: #55C2D2;
+  --mantenimiento-mayor: #F2C980;
+
+  --bg-color: #f4f8f8;
+  --card-bg: #FFFFFF;
+  --text-main: #00363B;
+  --text-muted: #00616B;
+  --border-color: #D1CFCD;
+
+  --bg-input: #EAF4F5;
+  --bg-diesel: #FFF8E8;
+
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  
+  --semaforo-ok-bg: #E8F5E9;
+  --semaforo-ok-dot: #43A047;
+  --semaforo-warn-bg: #FFF9E6;
+  --semaforo-warn-dot: #F9A825;
+  --semaforo-crit-bg: #FFEBEE;
+  --semaforo-crit-dot: #E53935;
+
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 20px;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.5;
+  padding-bottom: 40px;
+}
+
+.app-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  padding: 24px 20px 32px;
+  border-bottom-left-radius: var(--border-radius-lg);
+  border-bottom-right-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: -20px;
+}
+
+.header-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-back {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-back:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.header-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-img {
+  max-width: 140px;
+  height: auto;
+  margin-bottom: 2px;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.app-main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  position: relative;
+  z-index: 1;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--bg-color);
+  padding-bottom: 8px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: var(--text-main);
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(0, 169, 224, 0.15);
+}
+
+.readonly-input {
+  background-color: var(--bg-color) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed;
+  font-weight: 600;
+}
+
+/* Toggle Buttons (Pesca) */
+.toggle-group {
+  display: flex;
+  background: var(--bg-color);
+  border-radius: var(--border-radius-sm);
+  padding: 4px;
+  gap: 4px;
+}
+
+.toggle-btn {
+  flex: 1;
+  position: relative;
+}
+
+.toggle-btn input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.toggle-btn span {
+  display: block;
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: var(--border-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.toggle-btn input:checked+span {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Tabs */
+.tabs-container {
+  display: flex;
+  background: var(--bg-color);
+  border-radius: var(--border-radius-sm);
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  border-radius: var(--border-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Accordion Equipos */
+.accordion-item {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  background-color: #fff;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.accordion-header:active {
+  background-color: var(--bg-color);
+}
+
+.master-badge {
+  background-color: rgba(242, 169, 0, 0.15);
+  color: #B27C00;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.accordion-icon {
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+}
+
+.accordion-item.active .accordion-icon {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  background-color: var(--bg-color);
+  padding: 0 16px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.accordion-item.active .accordion-content {
+  padding: 16px;
+  max-height: 1200px;
+}
+
+.hours-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.hour-block {
+  background: white;
+  padding: 10px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+.hour-block label {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.hour-block input {
+  padding: 8px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.hr-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--success);
+}
+
+.hr-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Utils */
+.d-none {
+  display: none !important;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.alert {
+  padding: 12px;
+  border-radius: var(--border-radius-sm);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.alert.warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #B45309;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.form-actions {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.primary-btn {
+  background-color: var(--primary-color);
+  color: #E9E3DC;
+  box-shadow: 0 4px 12px rgba(0, 97, 107, 0.3);
+}
+
+.primary-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.primary-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 6px rgba(0, 97, 107, 0.3);
+}
+
+/* Animations */
+.scale-in {
+  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Navigation Menus */
+.section-title {
+  font-size: 18px;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.menu-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  min-height: 120px;
+  width: 100%;
+}
+
+.menu-card:not(.disabled-card):hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--secondary-color);
+}
+
+.menu-card:not(.disabled-card):active {
+  transform: translateY(0);
+}
+
+.menu-icon {
+  color: var(--primary-color);
+  margin-bottom: 12px;
+}
+
+.menu-card span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.disabled-card {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--bg-color);
+  border-color: transparent;
+}
+
+.disabled-card .menu-icon {
+  color: var(--text-muted);
+}
+
+.screen:not(#screen-chmura) {
+  padding-top: 50px;
+}
+
+/* --- Optimized Chart Modal --- */
+.chart-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  overflow-y: auto;
+  padding: 10px 0;
+  backdrop-filter: blur(5px);
+}
+
+.chart-modal-content {
+  background: #FFFFFF;
+  width: 94%;
+  max-width: 850px;
+  margin: 20px auto;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+@media (max-width: 600px) {
+  .chart-modal-content {
+    width: 96%;
+    padding: 16px;
+    margin: 10px auto;
+    border-radius: 16px;
+  }
+  .chart-card {
+    padding: 10px !important;
+  }
+  .chart-container {
+    height: 240px !important; /* Slightly shorter on mobile to fit screen better */
+  }
+}
+
+.chart-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #E5E7EB;
+  padding-bottom: 12px;
+}
+
+.chart-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.chart-container {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+/* ======= TECLADO NUMÉRICO POPOVER ======= */
+.numpad-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 10001;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 20px;
+}
+.numpad-overlay.open {
+  display: flex;
+}
+
+.numpad-container {
+  background: #fff;
+  border-radius: 16px 16px 8px 8px;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.18);
+  width: 320px;
+  max-width: 95vw;
+  padding: 12px;
+  animation: numpadSlideUp 0.25s ease-out;
+}
+
+@keyframes numpadSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.numpad-display {
+  background: var(--bg-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: right;
+  font-family: 'Inter', monospace;
+  color: var(--text-main);
+  margin-bottom: 10px;
+  min-height: 48px;
+}
+
+.numpad-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.numpad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.numpad-key {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px 0;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s;
+  color: var(--text-main);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.numpad-key:active {
+  background: var(--accent-color);
+  color: #fff;
+  transform: scale(0.95);
+}
+
+.numpad-key.key-del {
+  background: #fee2e2;
+  color: var(--danger);
+  font-size: 16px;
+}
+
+.numpad-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.numpad-btn {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.numpad-btn.btn-confirm {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.numpad-btn.btn-next {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.numpad-btn.btn-skip {
+  background: var(--bg-color);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+/* ======= SELECTORES HORA:MIN INLINE (CH-MU-RA) ======= */
+.hm-selector {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.hm-selector select {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 14px;
+}
+
+.hm-input {
+  flex: 1;
+  padding: 10px 4px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
+  color: var(--text-main);
+  transition: border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hm-input:active, .hm-input:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+.hm-selector .hm-colon {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.hm-decimal {
+  font-size: 12px;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* ======= FLUJO SECUENCIAL ======= */
+.flow-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+
+.flow-btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.flow-btn.btn-flow-next {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.flow-btn.btn-flow-skip {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+}
+
+/* ======= AMPERAJE SECUENCIAL ======= */
+.amp-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.amp-controls .flow-btn {
+  flex: 1;
+}
+
+.amp-row-auto {
+  display: grid;
+  grid-template-columns: 80px 1fr 80px auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.amp-row-auto .amp-hora-label {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 14px;
+}
+    
+        /* CLASE PARA EXPORTAR PDF (Resolución ampliada para encajar tablas) */
+        
+        
+        
+        
+        .pdf-export-mode canvas {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+
+        .pdf-export-mode * {
+            box-sizing: border-box !important;
+        }
+        .pdf-export-mode table {
+            width: 100% !important;
+            table-layout: auto !important;
+        }
+        .pdf-export-mode th, .pdf-export-mode td {
+            word-wrap: break-word !important;
+        }
+
+      
+.pdf-clone-container {
+    width: 794px !important;
+    max-width: 794px !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+}
+
+
+
+
+</style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-top">
+                <button class="btn-back d-none" id="btnBack">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <div class="header-titles">
+                    <h1 style="font-size: 20px; font-weight: 700; margin: 0;">COPEINCA</h1>
+                    <span class="subtitle" id="headerSubtitle">Control de Disponibilidad</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <!-- 1. PANTALLA PRINCIPAL -->
+        <div id="screen-main" class="screen">
+            <h2 class="section-title">Seleccione un Módulo</h2>
+            <div class="menu-grid">
+                <div class="menu-card" id="btn-go-casafuerza" style="border-color: var(--accent-color);">
+                    <div class="menu-icon" style="color: var(--accent-color);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                    <span>CASA FUERZA</span>
+                </div>
+                <div class="menu-card" id="btn-go-disponibilidad">
+                    <div class="menu-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                    </div>
+                    <span>DISPONIBILIDAD</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. PANTALLA SELECCIÓN DISPONIBILIDAD -->
+        <div id="screen-disponibilidad" class="screen d-none">
+            <h2 class="section-title">Seleccione Área de Registro</h2>
+            <div class="menu-grid">
+                <div class="menu-card" id="btn-go-chmura">
+                    <span>CH-MU-RA</span>
+                </div>
+                <div class="menu-card" id="btn-go-cpse">
+                    <span>CP-SE</span>
+                </div>
+                <div class="menu-card" id="btn-go-ggee">
+                    <span>GGEE</span>
+                </div>
+                <div class="menu-card" id="btn-go-rs">
+                    <span>RS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. PANTALLA CH-MU-RA -->
+        <div id="screen-chmura" class="screen d-none">
+            <form id="registroForm">
+                <div class="card">
+                    <h3 class="card-title">Datos Generales</h3>
+                    <div class="form-group grid-2">
+                        <div>
+                            <label>Inicio Temporada</label>
+                            <input type="date" id="fecha-inicio">
+                        </div>
+                        <div>
+                            <label>Temporada</label>
+                            <select id="temporada">
+                                <option value="PN 1">PN 1</option>
+                                <option value="PN 2">PN 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group grid-2">
+                        <div>
+                            <label>Año</label>
+                            <input type="text" id="ano" class="readonly-input" readonly>
+                        </div>
+                        <div>
+                            <label>Sede</label>
+                            <select id="centro-logistico">
+                                <option value="BYO">BYO</option>
+                                <option value="SPE">SPE</option>
+                                <option value="CBN">CBN</option>
+                                <option value="CBS">CBS</option>
+                                <option value="CCS">CCS</option>
+                                <option value="CAL">CAL</option>
+                                <option value="PSC">PSC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group grid-2">
+                        <div>
+                            <label>Fecha Operación</label>
+                            <div style="display:flex; gap:5px;">
+                                <button type="button" class="btn" style="padding:0 12px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;" onclick="prevDay('fecha')" title="Día Anterior">◀</button>
+                                <input type="date" id="fecha" required style="flex:1;">
+                                <button type="button" class="btn" style="padding:0 12px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;" onclick="nextDay('fecha')" title="Día Siguiente">▶</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Semana</label>
+                            <input type="text" id="semana" class="readonly-input" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Se recibió pesca hoy?</label>
+                        <div class="toggle-group">
+                            <label class="toggle-btn">
+                                <input type="radio" name="hayPesca" value="si" checked>
+                                <span>SÍ</span>
+                            </label>
+                            <label class="toggle-btn">
+                                <input type="radio" name="hayPesca" value="no">
+                                <span>NO</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="no-pesca-alert" class="alert warning d-none">
+                    <strong>Nota:</strong> Al marcar "Sin Pesca", todas las horas operativas se pondrán en 0 y se guardarán en Reserva (HR: 24.00).
+                </div>
+
+                <div class="tabs-container">
+                    <button type="button" class="tab-btn active" data-target="Línea 1">Línea 1</button>
+                    <button type="button" class="tab-btn" data-target="Línea 2">Línea 2</button>
+                    <button type="button" class="tab-btn" data-target="Línea 3">Línea 3</button>
+                </div>
+
+                <div class="tab-content active" id="content-Linea-1"></div>
+                <div class="tab-content" id="content-Linea-2"></div>
+                <div class="tab-content" id="content-Linea-3"></div>
+
+                <div class="card">
+                    <label>Comentarios adicionales</label>
+                    <textarea id="comentario" rows="2" placeholder="Notas sobre la guardia..."></textarea>
+                </div>
+
+                <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <button type="button" class="btn primary-btn" id="chmuraBtnSave">GUARDAR EN LA NUBE</button>
+                    <button type="button" class="btn" style="background:#fff; border:1px solid var(--primary-color); color:var(--primary-color)" id="chmuraBtnExport">EXPORTAR EXCEL</button>
+                    <button type="button" class="btn btn-chart" id="chmuraBtnChart">📊 VER GRÁFICOS</button>
+                </div>
+                <p style="text-align: center; font-size: 11px; margin-top: 10px; color: var(--text-muted);">
+                    Versión Cloud 3.5 - Datos persistentes en Supabase
+                </p>
+            </form>
+        </div>
+
+        <!-- 4. PANTALLA CP-SE -->
+        <div id="screen-cpse" class="screen d-none">
+            <form id="registroFormCPSE">
+                <div class="card">
+                    <h3 class="card-title">Datos Generales (CP-SE)</h3>
+                    <div class="form-group grid-2">
+                        <div><label>Ini Temp</label><input type="date" id="cpse-fecha-inicio"></div>
+                        <div>
+                            <label>Temporada</label>
+                            <select id="cpse-temporada">
+                                <option value="PN 1">PN 1</option>
+                                <option value="PN 2">PN 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group grid-2">
+                        <div><label>Año</label><input type="text" id="cpse-ano" class="readonly-input" readonly></div>
+                        <div>
+                            <label>Sede</label>
+                            <select id="cpse-centro-logistico">
+                                <option value="BYO">BYO</option>
+                                <option value="SPE">SPE</option>
+                                <option value="CBN">CBN</option>
+                                <option value="CBS">CBS</option>
+                                <option value="CCS">CCS</option>
+                                <option value="CAL">CAL</option>
+                                <option value="PSC">PSC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group grid-2">
+                        <div>
+                            <label>Fecha Operación</label>
+                            <div style="display:flex; gap:5px;">
+                                <button type="button" class="btn" style="padding:0 12px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;" onclick="prevDay('cpse-fecha')" title="Día Anterior">◀</button>
+                                <input type="date" id="cpse-fecha" required style="flex:1;">
+                                <button type="button" class="btn" style="padding:0 12px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;" onclick="nextDay('cpse-fecha')" title="Día Siguiente">▶</button>
+                            </div>
+                        </div>
+                        <div><label>Semana</label><input type="text" id="cpse-semana" class="readonly-input" readonly></div>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Se recibió pesca hoy?</label>
+                        <div class="toggle-group">
+                            <label class="toggle-btn"><input type="radio" name="cpseHayPesca" value="si" checked><span>SÍ</span></label>
+                            <label class="toggle-btn"><input type="radio" name="cpseHayPesca" value="no"><span>NO</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div id="cpse-no-pesca-alert" class="alert warning d-none">Modo sin operación.</div>
+
+                <div class="tabs-container">
+                    <button type="button" class="tab-btn cpse-tab-btn active" data-target="Enfriador">Enfriador</button>
+                    <button type="button" class="tab-btn cpse-tab-btn" data-target="Prensado">Prensa</button>
+                    <button type="button" class="tab-btn cpse-tab-btn" data-target="Rotadisk">Rotadisk</button>
+                    <button type="button" class="tab-btn cpse-tab-btn" data-target="Rotatubo">Rotatubo</button>
+                    <button type="button" class="tab-btn cpse-tab-btn" data-target="Sec-HLT">Sec. HLT</button>
+                </div>
+                <div class="tab-content active" id="content-cpse-Enfriador"></div>
+                <div class="tab-content" id="content-cpse-Prensado"></div>
+                <div class="tab-content" id="content-cpse-Rotadisk"></div>
+                <div class="tab-content" id="content-cpse-Rotatubo"></div>
+                <div class="tab-content" id="content-cpse-Sec-HLT"></div>
+
+                <div class="card"><label>Notas</label><textarea id="cpse-comentario" rows="2"></textarea></div>
+                <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <button type="button" class="btn primary-btn" id="cpseBtnSave">GUARDAR</button>
+                    <button type="button" class="btn" id="cpseBtnExport">EXPORTAR</button>
+                    <button type="button" class="btn btn-chart" id="cpseBtnChart">📊 VER GRÁFICOS</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 5. PANTALLA GGEE -->
+        <div id="screen-ggee" class="screen d-none">
+            <form id="registroFormGGEE">
+                <div class="card">
+                    <h3 class="card-title">Datos Generales (GGEE)</h3>
+                    <div class="form-group grid-2">
+                        <div><label>Ini Temporada</label><input type="date" id="ggee-fecha-inicio"></div>
+                        <div>
+                            <label>Temporada</label>
+                            <select id="ggee-temporada">
+                                <option value="PN 1">PN 1</option>
+                                <option value="PN 2">PN 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group grid-2">
+                        <div><label>Año</label><input type="text" id="ggee-ano" class="readonly-input" readonly></div>
+                        <div>
+                            <label>Sede</label>
+                            <select id="ggee-centro">
+                                <option value="BYO">BYO</option>
+                                <option value="SPE">SPE</option>
+                                <option value="CBN">CBN</option>
+                                <option value="CBS">CBS</option>
+                                <option value="CCS">CCS</option>
+                                <option value="CAL">CAL</option>
+                                <option value="PSC">PSC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group grid-2">
+                        <div>
+                            <label>Fecha Operación</label>
+                            <div style="display:flex; gap:5px;">
+                                <button type="button" class="btn" style="padding:0 12px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;" onclick="prevDay('ggee-fecha')" title="Día Anterior">◀</button>
+                                <input type="date" id="ggee-fecha" required style="flex:1;">
+                                <button type="button" class="btn" style="padding:0 12px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;" onclick="nextDay('ggee-fecha')" title="Día Siguiente">▶</button>
+                            </div>
+                        </div>
+                        <div><label>Semana</label><input type="text" id="ggee-semana" class="readonly-input" readonly></div>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Se recibió pesca hoy?</label>
+                        <div class="toggle-group">
+                            <label class="toggle-btn"><input type="radio" name="ggeePesca" value="si" checked><span>SÍ</span></label>
+                            <label class="toggle-btn"><input type="radio" name="ggeePesca" value="no"><span>NO</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div id="content-ggee-all"></div>
+                <div class="card"><label>Notas</label><textarea id="ggee-comentario"></textarea></div>
+                <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <button type="button" class="btn primary-btn" id="ggeeBtnSave">GUARDAR</button>
+                    <button type="button" class="btn" id="ggeeBtnExport">EXPORTAR</button>
+                    <button type="button" class="btn btn-chart" id="ggeeBtnChart">📊 VER GRÁFICOS</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 6. PANTALLA RS -->
+        <div id="screen-rs" class="screen d-none">
+            <form id="registroFormRS">
+                <div class="card">
+                    <h3 class="card-title">Datos Generales (RS)</h3>
+                    <div class="form-group grid-2">
+                        <div><label>Ini Temporada</label><input type="date" id="rs-fecha-inicio"></div>
+                        <div>
+                            <label>Temporada</label>
+                            <select id="rs-temporada">
+                                <option value="PN 1">PN 1</option>
+                                <option value="PN 2">PN 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group grid-2">
+                        <div><label>Año</label><input type="text" id="rs-ano" class="readonly-input" readonly></div>
+                        <div>
+                            <label>Sede</label>
+                            <select id="rs-centro">
+                                <option value="BYO">BYO</option>
+                                <option value="SPE">SPE</option>
+                                <option value="CBN">CBN</option>
+                                <option value="CBS">CBS</option>
+                                <option value="CCS">CCS</option>
+                                <option value="CAL">CAL</option>
+                                <option value="PSC">PSC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group grid-2">
+                        <div>
+                            <label>Fecha Operación</label>
+                            <div style="display:flex; gap:5px;">
+                                <button type="button" class="btn" style="padding:0 12px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;" onclick="prevDay('rs-fecha')" title="Día Anterior">◀</button>
+                                <input type="date" id="rs-fecha" required style="flex:1;">
+                                <button type="button" class="btn" style="padding:0 12px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:16px; cursor:pointer;" onclick="nextDay('rs-fecha')" title="Día Siguiente">▶</button>
+                            </div>
+                        </div>
+                        <div><label>Semana</label><input type="text" id="rs-semana" class="readonly-input" readonly></div>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Se recibió pesca hoy?</label>
+                        <div class="toggle-group">
+                            <label class="toggle-btn"><input type="radio" name="rsPesca" value="si" checked><span>SÍ</span></label>
+                            <label class="toggle-btn"><input type="radio" name="rsPesca" value="no"><span>NO</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div id="content-rs-all"></div>
+                <div class="card"><label>Notas</label><textarea id="rs-comentario"></textarea></div>
+                <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <button type="button" class="btn primary-btn" id="rsBtnSave">GUARDAR</button>
+                    <button type="button" class="btn" id="rsBtnExport">EXPORTAR</button>
+                    <button type="button" class="btn btn-chart" id="rsBtnChart">📊 VER GRÁFICOS</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 7. PANTALLA LOGIN CASA FUERZA -->
+        <div id="screen-logincf" class="screen d-none" style="padding-top: 50px;">
+            <div class="card" style="max-width: 400px; margin: 0 auto; text-align: center;">
+                <h3 class="card-title" style="margin-bottom: 20px;">Acceso a Casa de Fuerza</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Ingrese su número de DNI para acceder a este módulo.</p>
+                <div class="form-group">
+                    <input type="text" id="login-dni" class="hm-input" placeholder="Ej: 73443371" style="text-align: center; font-size: 24px; padding: 15px; background: var(--bg-input);">
+                </div>
+                <button type="button" class="btn primary-btn" id="btnLoginCF" style="width: 100%; padding: 12px; font-size: 16px;">Ingresar</button>
+            </div>
+        </div>
+
+        <!-- 8. PANTALLA CASA FUERZA -->
+        <div id="screen-casafuerza" class="screen d-none">
+            <div class="card">
+                <h3 class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+                    Registro Diario
+                    <div style="display:flex; gap:5px; align-items:center;">
+                        <button type="button" class="btn" style="padding:4px 10px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:14px; cursor:pointer;" onclick="prevDay('cf-fecha')" title="Día Anterior">◀</button>
+                        <input type="date" id="cf-fecha" style="width:auto; padding:6px; font-size:13px;">
+                        <button type="button" class="btn" style="padding:4px 10px; background:var(--primary-color); color:white; border:none; border-radius:4px; font-size:14px; cursor:pointer;" onclick="nextDay('cf-fecha')" title="Día Siguiente">▶</button>
+                    </div>
+                </h3>
+                <div class="form-group grid-2">
+                    <div>
+                        <label>Inicio Temporada</label>
+                        <input type="date" id="cf-fecha-inicio">
+                    </div>
+                    <div>
+                        <label>Año</label>
+                        <input type="text" id="cf-ano" class="readonly-input" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Semana</label>
+                    <input type="text" id="cf-semana" class="readonly-input" readonly>
+                </div>
+                <div id="cf-last-reg-info" style="font-size:12px; font-weight:700; color:var(--primary-color); text-align:right; margin-bottom:8px;">📅 Buscando último registro...</div>
+
+
+                <p class="helper-text">Ingrese los tiempos y lecturas de los grupos electrógenos.</p>
+            </div>
+            
+            <div id="cf-container"></div>
+            
+            <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <button type="button" class="btn primary-btn" id="cfBtnSave">GUARDAR DÍA</button>
+                <button type="button" class="btn" style="background:var(--semaforo-ok-dot); color:#fff;" id="cfBtnPrintDaily">🖨️ PDF DIARIO</button>
+            </div>
+            <div class="form-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button type="button" class="btn" style="background:var(--accent-color); color:#fff;" id="cfBtnExport">EXPORTAR EXCEL</button>
+                <button type="button" class="btn btn-chart" id="cfBtnChart">📊 DASHBOARD MENSUAL</button>
+            </div>
+            <br>
+        </div>
+    </main>
+
+    <!-- POPOVER TECLADO NUMÉRICO -->
+    <div class="numpad-overlay" id="numpadOverlay">
+        <div class="numpad-container">
+            <div class="numpad-label" id="numpadLabel">Ingrese valor</div>
+            <div class="numpad-display" id="numpadDisplay">0</div>
+            <div class="numpad-grid">
+                <button class="numpad-key" data-key="1">1</button>
+                <button class="numpad-key" data-key="2">2</button>
+                <button class="numpad-key" data-key="3">3</button>
+                <button class="numpad-key" data-key="4">4</button>
+                <button class="numpad-key" data-key="5">5</button>
+                <button class="numpad-key" data-key="6">6</button>
+                <button class="numpad-key" data-key="7">7</button>
+                <button class="numpad-key" data-key="8">8</button>
+                <button class="numpad-key" data-key="9">9</button>
+                <button class="numpad-key" data-key=".">.</button>
+                <button class="numpad-key" data-key="0">0</button>
+                <button class="numpad-key key-del" data-key="del">⌫</button>
+            </div>
+            <div class="numpad-actions">
+                <button class="numpad-btn btn-confirm" id="numpadConfirm">LISTO ✓</button>
+                <button class="numpad-btn btn-next" id="numpadNext">SIGUIENTE →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE REPORTE DIARIO (PDF) -->
+    <div id="dailyReportModalOverlay" class="chart-modal-overlay">
+        <div class="chart-modal-content scale-in" style="max-width: 900px;">
+            <div class="chart-modal-header">
+                <h2 style="color: var(--primary-color); font-size:18px; margin:0; font-weight:700;">Reporte Diario (Casa Fuerza)</h2>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <button id="btnRealPrintDaily" class="btn primary-btn" style="padding:6px 12px; font-size:12px;">⬇ DESCARGAR PDF</button>
+                    <button id="btnRealExportExcelDaily" class="btn" style="background:#10b981; color:#fff; padding:6px 12px; font-size:12px; margin-left:10px;">📊 EXPORTAR EXCEL</button>
+                    <button id="dailyReportModalClose" style="background:transparent; border:none; color:#666; font-size:32px; cursor:pointer; line-height:1;">&times;</button>
+                </div>
+            </div>
+            <div id="dailyReportBody" style="display:flex; flex-direction:column; gap:20px;">
+                <div style="text-align:center; padding:40px; color:var(--text-muted);">Generando reporte...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE GRÁFICOS WEB (Optimizado) -->
+    <div id="chartModalOverlay" class="chart-modal-overlay">
+        <div class="chart-modal-content scale-in">
+            <div class="chart-modal-header">
+                <h2 id="chartModalTitle" style="color: var(--primary-color); font-size:18px; margin:0; font-weight:700;">Dashboard Mensual</h2>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <input type="month" id="chartMonthFilter" class="hm-input" style="padding:6px; font-size:14px; width:150px; cursor:pointer;" title="Filtrar por Mes">
+                    <button id="btnDownloadMonthlyPDF" class="btn primary-btn" style="padding:6px 12px; font-size:12px;">⬇ DESCARGAR PDF</button>
+                    <button id="chartModalClose" style="background:transparent; border:none; color:#666; font-size:32px; cursor:pointer; line-height:1;">&times;</button>
+                </div>
+            </div>
+            <div id="chartModalBody" style="display:flex; flex-direction:column; gap:20px; background:#fff;">
+                <div style="text-align:center; padding:40px; color:var(--text-muted);">Cargando datos...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+    // --- DIAGNÓSTICO DE ERRORES GLOBAL ---
+    window.onerror = function(msg, url, line, col, error) {
+    alert("CRASH: " + msg + " (Línea: " + line + ")");
+    console.error("Error detectado:", {msg, url, line, col, error});
+    return false;
+};
+
+    function downloadBlob(blob, fileName) {
+        if (typeof download === "function") {
+            download(blob, fileName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        } else {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+
+    let supabaseClient = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("Iniciando COPEINCA Premium...");
+
+        // 0. SUPABASE INIT
+        try {
+            if (typeof supabase !== 'undefined') {
+                const { createClient } = supabase;
+                const SBASE_URL = 'https://gwbteaqpbhnjzagodyxd.supabase.co';
+                const SBASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3YnRlYXFwYmhuanphZ29keXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NTg4MjYsImV4cCI6MjA5MjEzNDgyNn0.ZVnVKmAkjPlpZGtgUEMPGvcuMTtyIWDbzHD3VQs7TNU';
+                supabaseClient = createClient(SBASE_URL, SBASE_KEY);
+            }
+        } catch (e) { console.error("Supabase error:", e); }
+
+        // 1. NAVEGACION
+        const screens = {
+            main: document.getElementById('screen-main'),
+            disponibilidad: document.getElementById('screen-disponibilidad'),
+            chmura: document.getElementById('screen-chmura'),
+            cpse: document.getElementById('screen-cpse'),
+            ggee: document.getElementById('screen-ggee'),
+            rs: document.getElementById('screen-rs'),
+            logincf: document.getElementById('screen-logincf'),
+            casafuerza: document.getElementById('screen-casafuerza')
+        };
+        const headerSubtitle = document.getElementById('headerSubtitle');
+        const btnBack = document.getElementById('btnBack');
+        let currentScreen = 'main';
+
+        function navigateTo(screenName, title, showBack) {
+            for (let k in screens) {
+                if (screens[k]) {
+                    screens[k].classList.add('d-none');
+                    screens[k].classList.remove('active');
+                }
+            }
+            if (screens[screenName]) {
+                screens[screenName].classList.remove('d-none');
+                screens[screenName].classList.add('active');
+            }
+            if (headerSubtitle) headerSubtitle.textContent = title;
+            if (btnBack) btnBack.classList.toggle('d-none', !showBack);
+            currentScreen = screenName;
+            window.scrollTo(0,0);
+        }
+
+        document.getElementById('btn-go-disponibilidad')?.addEventListener('click', () => navigateTo('disponibilidad', 'Disponibilidad', true));
+        document.getElementById('btn-go-casafuerza')?.addEventListener('click', () => navigateTo('logincf', 'Control de Acceso', true));
+        document.getElementById('btn-go-chmura')?.addEventListener('click', () => navigateTo('chmura', 'Registro CH-MU-RA', true));
+        document.getElementById('btn-go-cpse')?.addEventListener('click', () => navigateTo('cpse', 'Registro CP-SE', true));
+        document.getElementById('btn-go-ggee')?.addEventListener('click', () => navigateTo('ggee', 'Registro GGEE', true));
+        document.getElementById('btn-go-rs')?.addEventListener('click', () => navigateTo('rs', 'Registro RS', true));
+
+        if (btnBack) {
+            btnBack.addEventListener('click', () => {
+                if (['chmura', 'cpse', 'ggee', 'rs'].includes(currentScreen)) navigateTo('disponibilidad', 'Disponibilidad', true);
+                else if (['disponibilidad', 'casafuerza', 'logincf'].includes(currentScreen)) navigateTo('main', 'Menú Principal', false);
+            });
+        }
+
+        // 2. TECLADO NUMÉRICO POPOVER
+        const numpadOverlay = document.getElementById('numpadOverlay');
+        const numpadDisplay = document.getElementById('numpadDisplay');
+        const numpadLabelEl = document.getElementById('numpadLabel');
+        let numpadValue = '', numpadOnConfirm = null, numpadOnNext = null;
+
+        function openNumpad(label, initialValue, onConfirm, onNext) {
+            numpadLabelEl.textContent = label;
+            numpadValue = initialValue || '';
+            numpadDisplay.textContent = numpadValue || '0';
+            numpadOnConfirm = onConfirm;
+            numpadOnNext = onNext;
+            numpadOverlay.classList.add('open');
+            numpadOverlay.style.display = 'flex';
+        }
+        function closeNumpad() {
+            numpadOverlay.classList.remove('open');
+            numpadOverlay.style.display = 'none';
+        }
+
+        if (numpadOverlay) {
+            numpadOverlay.querySelectorAll('.numpad-key').forEach(key => {
+                key.onclick = (e) => {
+                    e.stopPropagation();
+                    const k = key.dataset.key;
+                    if (k === 'del') numpadValue = numpadValue.slice(0, -1);
+                    else if (k === '.') { if (!numpadValue.includes('.')) numpadValue = (numpadValue || '0') + '.'; }
+                    else { if (numpadValue === '0') numpadValue = ''; numpadValue += k; }
+                    numpadDisplay.textContent = numpadValue || '0';
+                };
+            });
+            document.getElementById('numpadConfirm').onclick = () => { if (numpadOnConfirm) numpadOnConfirm(numpadValue); closeNumpad(); };
+            document.getElementById('numpadNext').onclick = () => { if (numpadOnConfirm) numpadOnConfirm(numpadValue); const fn = numpadOnNext; closeNumpad(); if (fn) setTimeout(fn, 150); };
+            numpadOverlay.onclick = (e) => { if (e.target === numpadOverlay) { if (numpadOnConfirm) numpadOnConfirm(numpadValue); closeNumpad(); } };
+        }
+
+        function attachNumpad(inputEl, label, nextFn) {
+            inputEl.readOnly = true;
+            inputEl.onclick = () => openNumpad(label, (inputEl.value === '0' || inputEl.value === '0.00') ? '' : inputEl.value, (val) => {
+                inputEl.value = val || '0';
+                inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+            }, nextFn);
+        }
+        window.attachNumpad = attachNumpad;
+
+        // 3. LOGICA DE FECHAS (AÑO Y SEMANA AUTOMÁTICOS)
+        window.nextDay = function(inputId) {
+            try {
+                const el = document.getElementById(inputId);
+                if (!el) return;
+                
+                if (!el.value) {
+                    const today = new Date();
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    el.value = `${yyyy}-${mm}-${dd}`;
+                } else {
+                    if (typeof el.stepUp === 'function') {
+                        el.stepUp(1);
+                    } else {
+                        const d = new Date(el.value + 'T12:00:00');
+                        d.setDate(d.getDate() + 1);
+                        const yyyy = d.getFullYear();
+                        const mm = String(d.getMonth() + 1).padStart(2, '0');
+                        const dd = String(d.getDate()).padStart(2, '0');
+                        el.value = `${yyyy}-${mm}-${dd}`;
+                    }
+                }
+                
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            } catch (err) {
+                console.error("Error en nextDay:", err);
+            }
+        };
+
+        window.prevDay = function(inputId) {
+            try {
+                const el = document.getElementById(inputId);
+                if (!el || !el.value) return;
+                
+                if (typeof el.stepDown === 'function') {
+                    el.stepDown(1);
+                } else {
+                    const d = new Date(el.value + 'T12:00:00');
+                    d.setDate(d.getDate() - 1);
+                    const yyyy = d.getFullYear();
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    el.value = `${yyyy}-${mm}-${dd}`;
+                }
+                
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            } catch (err) {
+                console.error("Error en prevDay:", err);
+            }
+        };
+
+        const INICIO_KEY = 'copeinca_inicio_temporada';
+        
+        function setupDateLogic(prefix = "") {
+            const fInicioId = prefix ? `${prefix}-fecha-inicio` : 'fecha-inicio';
+            const fInicio = document.getElementById(fInicioId);
+            const fOp = document.getElementById(prefix ? `${prefix}-fecha` : 'fecha');
+            const sem = document.getElementById(prefix ? `${prefix}-semana` : 'semana');
+            const ano = document.getElementById(prefix ? `${prefix}-ano` : 'ano');
+
+            if (fInicio) {
+                // Restaurar desde localStorage si existe
+                const saved = localStorage.getItem(INICIO_KEY);
+                if (saved && !fInicio.value) fInicio.value = saved;
+                
+                // Guardar en localStorage al cambiar y sincronizar los demás
+                fInicio.addEventListener('change', (e) => {
+                    localStorage.setItem(INICIO_KEY, e.target.value);
+                    ['fecha-inicio', 'cpse-fecha-inicio', 'ggee-fecha-inicio', 'rs-fecha-inicio', 'cf-fecha-inicio'].forEach(id => {
+                        const other = document.getElementById(id);
+                        if (other && other !== fInicio) other.value = e.target.value;
+                    });
+                });
+            }
+
+            function calc() {
+                if (!fInicio || !fOp) return;
+                const d1 = new Date(fInicio.value);
+                const d2 = new Date(fOp.value);
+                if (isNaN(d1) || isNaN(d2)) return;
+                if (ano) ano.value = d2.getFullYear();
+                const diff = d2.getTime() - d1.getTime();
+                const week = Math.max(1, Math.floor((diff / (1000*60*60*24)) / 7) + 1);
+                if (sem) sem.value = week;
+            }
+            if (fInicio) fInicio.addEventListener('change', calc);
+            if (fOp) fOp.addEventListener('change', calc);
+            
+            const now = new Date();
+            if (fOp && !fOp.value) fOp.value = now.toISOString().split('T')[0];
+            if (fInicio && !fInicio.value) fInicio.value = `${now.getFullYear()}-01-01`;
+            calc();
+        }
+        ['', 'cpse', 'ggee', 'rs', 'cf'].forEach(p => setupDateLogic(p));
+
+        // 4. HELPERS CALCULO HORAS
+        function getDecimalFromSelectors(uniqueId, type) {
+            const h = document.getElementById(`eq_${uniqueId}_${type}_h`);
+            const m = document.getElementById(`eq_${uniqueId}_${type}_m`);
+            if (!h || !m) return 0;
+            const val = (parseInt(h.value)||0) + (parseInt(m.value)||0)/60;
+            const decEl = document.getElementById(`eq_${uniqueId}_${type}_dec`);
+            if (decEl) decEl.textContent = val.toFixed(2);
+            return val;
+        }
+
+        function recalculateHours(uniqueId) {
+            const ho = getDecimalFromSelectors(uniqueId, 'HO');
+            const hmp = getDecimalFromSelectors(uniqueId, 'HMP');
+            const hc = getDecimalFromSelectors(uniqueId, 'HC');
+            const hrEl = document.getElementById(`eq_${uniqueId}_HR`);
+            const sumEl = document.getElementById(`eq_${uniqueId}_SUM`);
+            let used = ho + hmp + hc;
+            if (used > 24) { 
+                alert("⚠️ Error: Supera las 24h."); 
+                ['HO','HMP','HC'].forEach(t => {
+                    const hi = document.getElementById(`eq_${uniqueId}_${t}_h`);
+                    const mi = document.getElementById(`eq_${uniqueId}_${t}_m`);
+                    if(hi) hi.value = '00';
+                    if(mi) mi.value = '00';
+                    getDecimalFromSelectors(uniqueId, t);
+                });
+                used = 0;
+            }
+            if (hrEl) hrEl.textContent = (24 - used).toFixed(2);
+            if (sumEl) sumEl.textContent = "24.00h";
+        }
+
+        function syncMasterHours(masterUid, groupClass) {
+            const mh = document.getElementById(`eq_${masterUid}_HO_h`).value;
+            const mm = document.getElementById(`eq_${masterUid}_HO_m`).value;
+            document.querySelectorAll(`.${groupClass}`).forEach(el => {
+                if (el.id.includes('_HO_h') && el.id !== `eq_${masterUid}_HO_h`) el.value = mh;
+                if (el.id.includes('_HO_m') && el.id !== `eq_${masterUid}_HO_m`) el.value = mm;
+                const uid = el.id.split('_')[1];
+                if(uid) recalculateHours(uid);
+            });
+        }
+
+        // 5. RENDERIZADO DE EQUIPOS
+        function renderEquipoCard(container, nombre, uid, isMaster, groupClass) {
+            const item = document.createElement('div');
+            item.className = `accordion-item ${!isMaster ? 'd-none slave-card' : ''} ${groupClass}-card`;
+            item.innerHTML = `
+                <div class="accordion-header">
+                    <span>${nombre} ${isMaster ? '<span class="master-badge">MAESTRO</span>' : ''}</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="hours-grid">
+                        <div class="hour-block">
+                            <label>HO</label>
+                            <div class="hm-selector">
+                                <input type="text" id="eq_${uid}_HO_h" class="hm-input ${groupClass}" value="00" readonly>
+                                <span>:</span>
+                                <input type="text" id="eq_${uid}_HO_m" class="hm-input ${groupClass}" value="00" readonly>
+                            </div>
+                            <div class="hm-decimal">= <span id="eq_${uid}_HO_dec">0.00</span></div>
+                        </div>
+                        <div class="hour-block hr-display">
+                            <label>Reserva (HR)</label>
+                            <span id="eq_${uid}_HR" class="hr-value">24.00</span>
+                        </div>
+                        <div class="hour-block">
+                            <label>HMP</label>
+                            <div class="hm-selector">
+                                <input type="text" id="eq_${uid}_HMP_h" class="hm-input" value="00" readonly>
+                                <span>:</span>
+                                <input type="text" id="eq_${uid}_HMP_m" class="hm-input" value="00" readonly>
+                            </div>
+                            <div class="hm-decimal">= <span id="eq_${uid}_HMP_dec">0.00</span></div>
+                        </div>
+                        <div class="hour-block">
+                            <label>HC</label>
+                            <div class="hm-selector">
+                                <input type="text" id="eq_${uid}_HC_h" class="hm-input" value="00" readonly>
+                                <span>:</span>
+                                <input type="text" id="eq_${uid}_HC_m" class="hm-input" value="00" readonly>
+                            </div>
+                            <div class="hm-decimal">= <span id="eq_${uid}_HC_dec">0.00</span></div>
+                        </div>
+                    </div>
+                    <div style="text-align:right; margin-top:8px; font-size:12px;">Suma: <strong id="eq_${uid}_SUM">24.00h</strong></div>
+                    ${isMaster ? `<div style="text-align:center; margin-top:10px;"><a href="#" class="toggle-slaves" style="font-size:11px; color:var(--accent-color); text-decoration:none;">Ver componentes dependientes</a></div>` : ''}
+                </div>
+            `;
+            container.appendChild(item);
+            item.querySelector('.accordion-header').onclick = () => item.classList.toggle('active');
+            if (isMaster) {
+                item.querySelector('.toggle-slaves').onclick = (e) => {
+                    e.preventDefault();
+                    const slaves = container.querySelectorAll(`.${groupClass}-card.slave-card`);
+                    const isHidden = slaves[0].classList.contains('d-none');
+                    slaves.forEach(s => s.classList.toggle('d-none'));
+                    e.target.textContent = isHidden ? "Ocultar componentes dependientes" : "Ver componentes dependientes";
+                };
+            }
+            ['HO','HMP','HC'].forEach(t => {
+                const hh = document.getElementById(`eq_${uid}_${t}_h`);
+                const mm = document.getElementById(`eq_${uid}_${t}_m`);
+                attachNumpad(hh, `${t} Horas`, () => mm.click());
+                attachNumpad(mm, `${t} Minutos`, null);
+                [hh, mm].forEach(inp => inp.addEventListener('input', () => {
+                    recalculateHours(uid);
+                    if (isMaster && t === 'HO') syncMasterHours(uid, groupClass);
+                }));
+            });
+        }
+
+        // --- INIT CHMURA ---
+        const chmuraEquips = {
+            "Línea 1": ["Bomba de Vacío N°1", "Compresor Sistema Absorbente N°1", "Desaguador Rotativo N°1", "Equipos Auxiliares Línea N°1", "Motor Diesel Principal N°1", "Motorreductor Desaguador N°1", "Transp. de Mallas N°1"],
+            "Línea 2": ["Bomba de Vacío N°2", "Compresor Sistema Absorbente N°2", "Desaguador Rotativo N°2", "Equipos Auxiliares Línea N°2", "Motor Diesel Principal N°2", "Motorreductor Desaguador N°2", "Transp. de Mallas N°2"],
+            "Línea 3": ["Bomba de Vacío N°3", "Compresor Sistema Absorbente N°3", "Desaguador Rotativo N°3", "Equipos Auxiliares Línea N°3", "Motor Eléctrico Bba N°3", "Motor Eléctrico Comp. N°3", "Reductor Desaguador N°3", "Transp. de Mallas N°3"]
+        };
+        Object.keys(chmuraEquips).forEach((lin, li) => {
+            const targetId = lin.replace('í', 'i').replace(' ','-');
+            const cont = document.getElementById(`content-${targetId}`);
+            if(cont) chmuraEquips[lin].forEach((nom, ei) => renderEquipoCard(cont, nom, `ch_${li}_${ei}`, ei===0, `ch-group-${li}`));
+        });
+
+        // --- INIT CPSE ---
+        const cpseEquips = {
+            "Enfriador": ["Enfriador N°1", "Reductor Enfriador N°1", "Enfriador N°2", "Reductor Enfriador N°2"],
+            "Prensado": ["Prensa N°1", "Caja Reductora P1", "Prensa N°2", "Caja Reductora P2", "Prensa N°3", "Caja Reductora P3", "Prensa N°4", "Caja Reductora P4", "Prensa N°5", "Caja Reductora P5"],
+            "Rotadisk": ["Secador Rotadiscos N°1", "Reductor Secador R1", "Secador Rotadiscos N°2", "Reductor Secador R2", "Secador Rotadiscos N°3", "Reductor Secador R3"],
+            "Rotatubo": ["Secador Rotatubo N°1", "Reductor Secador RT1", "Secador Rotatubo N°2", "Reductor Secador RT2", "Secador Rotatubo N°3", "Reductor Secador RT3"],
+            "Sec-HLT": ["Secador Aire Caliente N°1", "Reductor Secador HLT"]
+        };
+        Object.keys(cpseEquips).forEach((proc, pi) => {
+            const cont = document.getElementById(`content-cpse-${proc}`);
+            if(cont) cpseEquips[proc].forEach((nom, ei) => {
+                const isMaster = (ei % 2 === 0);
+                const gClass = `cpse-g-${pi}-${Math.floor(ei/2)}`;
+                renderEquipoCard(cont, nom, `cpse_${pi}_${ei}`, isMaster, gClass);
+            });
+        });
+
+        // --- INIT GGEE & RS ---
+        const ggeeList = ["GGEE N°1", "GGEE N°2", "GGEE N°3"];
+        const gcont = document.getElementById('content-ggee-all');
+        if(gcont) ggeeList.forEach((n,i) => renderEquipoCard(gcont, n, `ggee_${i}`, true, `gg-${i}`));
+
+        const rsList = ["RS N°1", "RS N°2"];
+        const rcont = document.getElementById('content-rs-all');
+        if(rcont) rsList.forEach((n,i) => renderEquipoCard(rcont, n, `rs_${i}`, true, `rs-${i}`));
+
+        // 6. TABS NAVIGATION
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                const parent = btn.parentElement;
+                parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const targetId = btn.dataset.target.replace('í','i').replace(' ','-');
+                const containerId = btn.classList.contains('cpse-tab-btn') ? `content-cpse-${targetId}` : `content-${targetId}`;
+                const current = document.getElementById(containerId);
+                if(current) {
+                    const sibs = current.parentElement.querySelectorAll('.tab-content');
+                    sibs.forEach(s => { s.classList.add('d-none'); s.classList.remove('active'); });
+                    current.classList.remove('d-none');
+                    current.classList.add('active');
+                }
+            };
+        });
+
+        // 7. CASA FUERZA (DETALLADO CON POTENCIAS Y CONTROL DE ACEITE)
+        const cfMotores = [
+            "BURMEISTER 1 - Potencia nominal 1000 kW",
+            "BURMEISTER 3 - Potencia nominal 1000 kW",
+            "Cummins N°4 - KTA 19 - Potencia nominal 400 kW",
+            "CAT N°5 - C18 - Potencia nominal 600 kW",
+            "Cummins N°6 - KTA 50 - Potencia Nominal 1250 KW",
+            "G.E N°10 CAT 3512 (PISCO) 890 kW",
+            "G.E N°11 - CAT 3512 B - Potencia nominal 1350 kW"
+        ];
+        const cfMotoresAux = [
+            "G.E. Nº7 - CAT 3306- Potencia nominal 205 kW",
+            "G.E. Nº9 - PERKINS- Potencia nominal 80 KW"
+        ];
+
+        const cfCont = document.getElementById('cf-container');
+        let oilConfigs = [];
+        let lastCFRegistrationDate = null;
+
+        async function fetchOilConfigs() {
+            if (!supabaseClient) return;
+            try {
+                // 1. Obtener configuraciones de aceite
+                const { data, error } = await supabaseClient.from('casa_fuerza_config').select('*');
+                if (error) throw error;
+                oilConfigs = data || [];
+                
+                // 2. Obtener última fecha de registro diario
+                const { data: lastLog, error: logErr } = await supabaseClient
+                    .from('casa_fuerza_diario')
+                    .select('fecha')
+                    .order('fecha', { ascending: false })
+                    .limit(1);
+                
+                if (!logErr && lastLog && lastLog.length > 0) {
+                    lastCFRegistrationDate = lastLog[0].fecha;
+                    updateLastRegUI();
+                }
+
+                updateOilUI();
+            } catch (err) {
+                console.error("Error fetching oil configs:", err);
+                document.querySelectorAll('[id^="oil_text_"]').forEach(el => el.innerHTML = '<span style="color:#ef4444;">Error de conexión</span>');
+            }
+        }
+
+        function updateLastRegUI() {
+            const el = document.getElementById('cf-last-reg-info');
+            if (!el || !lastCFRegistrationDate) return;
+            const [y, m, d] = lastCFRegistrationDate.split('-');
+            el.innerHTML = `📅 Último registro guardado: <b>${d}/${m}/${y}</b>`;
+        }
+
+        function updateOilUI() {
+            const count = oilConfigs.length;
+            // Inicializamos todos
+            document.querySelectorAll('[id^="oil_text_"]').forEach(el => {
+                el.innerHTML = `<span style="color:var(--text-muted);">Sin datos (DB: ${count} reg.)</span>`;
+            });
+            document.querySelectorAll('[id^="mayor_text_"]').forEach(el => {
+                el.innerHTML = `<span style="color:var(--text-muted);">Sin datos (DB: ${count} reg.)</span>`;
+            });
+
+            const normalize = (s) => s ? s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() : '';
+
+            oilConfigs.forEach(conf => {
+                const total = (conf.horas_acumuladas_base || 0);
+                const limit = conf.limite_horas || 500;
+                // Calculamos histórico total asumiendo base + último cambio (Simplificación hasta tener tabla completa)
+                // Idealmente esto viene de una suma real histórica.
+                const totalHist = (conf.horas_totales_historicas || total);
+                
+                let lastDateDisplay = '---';
+                if (conf.ultimo_cambio_fecha) {
+                    const [y, m, d] = conf.ultimo_cambio_fecha.split('-');
+                    lastDateDisplay = `${d}/${m}/${y}`;
+                }
+
+                let lastRegDisplay = '---';
+                if (conf.ultima_fecha_registro) {
+                    const [ry, rm, rd] = conf.ultima_fecha_registro.split('-');
+                    lastRegDisplay = `${rd}/${rm}/${ry}`;
+                }
+                
+                const confNameNorm = normalize(conf.equipo_nombre);
+                const match = [...cfMotores, ...cfMotoresAux].find(n => normalize(n) === confNameNorm);
+                if (!match) return;
+
+                const safeName = match.replace(/[^a-zA-Z0-9]/g, '_');
+                
+                // === CONTROL DE ACEITE ===
+                const progressEl = document.getElementById(`oil_progress_${safeName}`);
+                const textEl = document.getElementById(`oil_text_${safeName}`);
+                if (progressEl && textEl) {
+                    const perc = Math.min((total / limit) * 100, 100);
+                    const faltan = Math.max(limit - total, 0);
+
+                    progressEl.style.width = `${perc}%`;
+                    if (perc > 90) progressEl.style.background = '#ef4444';
+                    else if (perc > 80) progressEl.style.background = '#f59e0b';
+                    else progressEl.style.background = '#22c55e';
+
+                    textEl.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                            <span>Acumulado: <b>${total.toFixed(1)}h</b> / ${limit}h</span>
+                            <span style="font-size:9px; opacity:0.8;">U. Cambio: ${lastDateDisplay}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:${perc>90?'#ef4444':'var(--text-muted)'}; font-weight:700;">${perc>99?'¡CAMBIO REQUERIDO!':`Faltan ${faltan.toFixed(1)}h`}</span>
+                            <span style="font-size:9px; color:var(--primary-color); opacity:0.7;">U. Registro: ${lastRegDisplay}</span>
+                        </div>
+                    `;
+                }
+
+                // === MANTENIMIENTO MAYOR ===
+                // Solo excluir BURMEISTER 1 y BURMEISTER 3 (según indicación del usuario)
+                const EQUIPOS_SIN_MAYOR = ["BURMEISTER 1", "BURMEISTER 3"];
+                const excluyeMayor = EQUIPOS_SIN_MAYOR.some(exc => match.startsWith(exc));
+
+                if (!excluyeMayor) {
+                    const ultimoMMHito = conf.ultimo_mant_mayor_hito || 0;
+                    const ultimoMMFecha = conf.ultimo_mant_mayor_fecha || '---';
+                    const ultimoMMHoras = conf.ultimo_mant_mayor_horas || 0;
+                    
+                    const milestones = [1000, 3000, 6000, 12000];
+                    let nextMayor = 12000;
+                    for (let m of milestones) {
+                        if (ultimoMMHito < m) { nextMayor = m; break; }
+                    }
+                    
+                    const pMayorEl = document.getElementById(`mayor_progress_${safeName}`);
+                    const tMayorEl = document.getElementById(`mayor_text_${safeName}`);
+                    const bMayorEl = document.getElementById(`mayor_badge_${safeName}`);
+                    
+                    if (pMayorEl && tMayorEl && bMayorEl) {
+                        const horasDesdeUltimo = Math.max(0, totalHist - ultimoMMHoras);
+                        const hitoGap = nextMayor - ultimoMMHito;
+                        const percM = Math.min((horasDesdeUltimo / hitoGap) * 100, 100);
+                        const faltanM = Math.max(hitoGap - horasDesdeUltimo, 0);
+                        
+                        bMayorEl.textContent = `HITO: ${nextMayor}h`;
+                        pMayorEl.style.width = `${percM}%`;
+                        
+                        if (percM > 95) pMayorEl.style.background = 'var(--danger)'; 
+                        else if (percM > 85) pMayorEl.style.background = 'var(--warning)';
+                        else pMayorEl.style.background = 'var(--mantenimiento-mayor)';
+                        
+                        let fechaDisplay = ultimoMMFecha;
+                        if (fechaDisplay !== '---') {
+                            const [y, m, d] = fechaDisplay.split('-');
+                            fechaDisplay = `${d}/${m}/${y}`;
+                        }
+                        
+                        tMayorEl.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>Progreso al hito: <b>${horasDesdeUltimo.toFixed(1)}h</b> / ${hitoGap}h</span>
+                                <span style="font-size:9px; opacity:0.8;">Últ. M.M.: ${fechaDisplay} (${ultimoMMHito}h)</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="color:${percM>95?'var(--danger)':'var(--text-muted)'}; font-weight:700;">${percM>99?'¡M. MAYOR REQUERIDO!':`Faltan ${faltanM.toFixed(1)}h`}</span>
+                            </div>
+                        `;
+                    }
+                }
+            });
+        }
+
+        function renderCFCard(nombre, i, type = 'mot') {
+            const id = `${type}_${i}`;
+            const isAux = (type !== 'mot');
+            const safeName = nombre.replace(/[^a-zA-Z0-9]/g, '_');
+            
+            // Excluir Mantenimiento Mayor solo para BURMEISTER 1 y BURMEISTER 3
+            const EQUIPOS_SIN_MAYOR = ["BURMEISTER 1", "BURMEISTER 3"];
+            const excluyeMayor = EQUIPOS_SIN_MAYOR.some(exc => nombre.startsWith(exc));
+
+            const div = document.createElement('div');
+            div.className = 'accordion-item';
+            div.innerHTML = `
+                <div class="accordion-header" style="background:${isAux?'#EAF4F5':'var(--primary-color)'}; color:${isAux?'var(--primary-color)':'#fff'}">
+                    <span style="color:${isAux?'var(--primary-color)':'#fff'}; font-weight:700;">${nombre} ${isAux?'<small style="color:var(--text-muted);">(Auxiliar)</small>':''}</span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button type="button" class="btn" style="padding: 4px; background: transparent; border: none; color: ${isAux?'var(--primary-color)':'#55C2D2'};" onclick="event.stopPropagation(); openOperationalModal('${nombre}', '${id}')" title="Registro Operacional">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 7h10"/><path d="M7 12h10"/><path d="M7 17h10"/></svg>
+                        </button>
+                        <span class="accordion-icon" style="color:${isAux?'var(--primary-color)':'#55C2D2'}">▼</span>
+                    </div>
+                </div>
+                <div class="accordion-content">
+                    <!-- SECCIÓN CONTROL ACEITE -->
+                    <div style="margin-bottom:8px; padding:12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:10px; border-left: 4px solid var(--accent-color);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <label style="margin:0; font-size:11px; font-weight:800; color:var(--primary-color);">CONTROL DE ACEITE</label>
+                            <button type="button" class="btn" style="padding:4px 8px; font-size:10px; background:#fff; border:1px solid var(--border-color);" onclick="handleOilChange('${nombre}')">Registrar Cambio</button>
+                        </div>
+                        <div style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; margin-bottom:4px;">
+                            <div id="oil_progress_${safeName}" style="height:100%; width:0%; background:var(--accent-color); transition:width 0.5s ease;"></div>
+                        </div>
+                        <div id="oil_text_${safeName}" style="font-size:10px; color:var(--text-muted); line-height:1.4;">Cargando estado...</div>
+                    </div>
+
+                    <!-- SECCIÓN MANTENIMIENTO MAYOR -->
+                    ${excluyeMayor ? '' : `
+                    <div style="margin-bottom:15px; padding:12px; background:var(--bg-diesel); border:1px solid var(--border-color); border-radius:10px; border-left: 4px solid var(--mantenimiento-mayor);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <label style="margin:0; font-size:11px; font-weight:800; color:var(--primary-color);">MANTENIMIENTO MAYOR</label>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <button type="button" class="btn" style="background:#fff; color:var(--mantenimiento-mayor); border:1px solid var(--mantenimiento-mayor); padding:2px 8px; font-size:10px; border-radius:4px;" onclick="handleMantMayor('${nombre}')">Registrar</button>
+                                <div id="mayor_badge_${safeName}" style="font-size:9px; background:#fff; color:var(--primary-color); padding:2px 6px; border-radius:4px; font-weight:700; border:1px solid var(--mantenimiento-mayor);">--</div>
+                            </div>
+                        </div>
+                        <div style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden; margin-bottom:4px;">
+                            <div id="mayor_progress_${safeName}" style="height:100%; width:0%; background:var(--mantenimiento-mayor); transition:width 0.5s ease;"></div>
+                        </div>
+                        <div id="mayor_text_${safeName}" style="font-size:10px; color:var(--text-muted); line-height:1.4;">Cargando histórico...</div>
+                    </div>
+                    `}
+
+                    <div class="hours-grid">
+                        <div><label>H. Inicial</label><input type="text" class="hm-input" id="${id}_hini" value="0.00" style="background:var(--bg-input);"></div>
+                        <div><label>H. Final</label><input type="text" class="hm-input" id="${id}_hfin" value="0.00" style="background:var(--bg-input);"></div>
+                        <div>
+                            <label>Diesel (gal)</label>
+                            <input type="text" class="hm-input" id="${id}_diesel" value="0" style="background:var(--mantenimiento-mayor); border:1px solid #c2410c; color:var(--primary-color);">
+                        </div>
+                        <div>
+                            <label>TOTAL HO</label>
+                            <div id="${id}_total" class="hm-input" style="background:var(--primary-color); border:none; color:var(--accent-color); font-size:16px; font-weight:800; text-align:center; display:flex; align-items:center; justify-content:center; height:36px; padding:0;">0.00</div>
+                        </div>
+                    </div>
+                    ${isAux ? '' : `
+                    <div class="hours-grid" style="margin-top:10px;">
+                        <div><label>Lec. Inicial</label><input type="text" class="hm-input" id="${id}_lini" value="0" style="background:var(--bg-input);"></div>
+                        <div><label>Lec. Final</label><input type="text" class="hm-input" id="${id}_lfin" value="0" style="background:var(--bg-input);"></div>
+                    </div>
+                    `}
+                </div>
+            `;
+            if(cfCont) cfCont.appendChild(div);
+            div.querySelector('.accordion-header').onclick = () => div.classList.toggle('active');
+            const hini = div.querySelector(`#${id}_hini`), hfin = div.querySelector(`#${id}_hfin`), total = div.querySelector(`#${id}_total`);
+            const diesel = div.querySelector(`#${id}_diesel`);
+            const lini = div.querySelector(`#${id}_lini`);
+            const lfin = div.querySelector(`#${id}_lfin`);
+            [hini, hfin].forEach(inp => inp.oninput = () => { 
+                let res = (parseFloat(hfin.value)||0) - (parseFloat(hini.value)||0);
+                total.textContent = (res < 0 ? 0 : res).toFixed(2);
+            });
+
+            if (typeof attachNumpad === 'function') {
+                attachNumpad(hini, `H. Inicial - ${nombre}`, () => hfin.click());
+                attachNumpad(hfin, `H. Final - ${nombre}`, () => diesel.click());
+                if (!isAux) {
+                    attachNumpad(diesel, `Diesel - ${nombre}`, () => lini.click());
+                    attachNumpad(lini, `Lec. Inicial - ${nombre}`, () => lfin.click());
+                    attachNumpad(lfin, `Lec. Final - ${nombre}`, null);
+                } else {
+                    attachNumpad(diesel, `Diesel - ${nombre}`, null);
+                }
+            }
+        }
+
+        async function handleMantMayor(nombre) {
+            const normalize = (s) => s ? s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() : '';
+            const conf = oilConfigs.find(c => normalize(c.equipo_nombre) === normalize(nombre));
+            
+            if (!conf) {
+                alert("Equipo no encontrado en la configuración.");
+                return;
+            }
+
+            const ultimoMMHito = conf.ultimo_mant_mayor_hito || 0;
+            const milestones = [1000, 3000, 6000, 12000];
+            let nextMayor = 12000;
+            for (let m of milestones) {
+                if (ultimoMMHito < m) { nextMayor = m; break; }
+            }
+
+            if (!confirm(`¿Confirmar que se realizó el MANTENIMIENTO MAYOR (${nextMayor}h) para ${nombre}?`)) return;
+            
+            const date = document.getElementById('cf-fecha').value;
+            const totalHist = (conf.horas_totales_historicas || conf.horas_acumuladas_base || 0);
+
+            const { error } = await supabaseClient.from('casa_fuerza_config').upsert({
+                equipo_nombre: nombre,
+                ultimo_mant_mayor_fecha: date,
+                ultimo_mant_mayor_horas: totalHist,
+                ultimo_mant_mayor_hito: nextMayor
+            });
+
+            if (error) {
+                alert("Error: " + error.message);
+                return;
+            }
+            alert(`Mantenimiento Mayor (${nextMayor}h) registrado para ${nombre}.`);
+            fetchOilConfigs(); // Refrescar UI
+        }
+
+        async function handleOilChange(nombre) {
+            if (!confirm(`¿Confirmar que se realizó el cambio de aceite para ${nombre}? Se reiniciará el contador.`)) return;
+            const date = document.getElementById('cf-fecha').value;
+            const { error } = await supabaseClient.from('casa_fuerza_config').upsert({
+                equipo_nombre: nombre,
+                ultimo_cambio_fecha: date,
+                ultimo_cambio_horometro: 0, 
+                horas_acumuladas_base: 0
+            });
+            if (error) alert(error.message); else { alert("✅ Cambio de aceite registrado."); fetchOilConfigs(); }
+        }
+
+
+        if(cfCont) {
+            cfMotores.forEach((n, i) => renderCFCard(n, i, 'mot'));
+            cfMotoresAux.forEach((n, i) => renderCFCard(n, i, 'motaux'));
+            fetchOilConfigs();
+
+        }
+
+        // 8. PERSISTENCIA SUPABASE
+        const MODULE_TABLES = { 'CHMURA': 'disponibilidad_chmura', 'CPSE': 'disponibilidad_cpse', 'GGEE': 'disponibilidad_ggee', 'RS': 'disponibilidad_rs' };
+
+        async function handleSave(modulo, equipMap, prefix, dateId) {
+            if (!supabaseClient) return;
+            const date = document.getElementById(dateId).value;
+            const p = prefix.replace('_','');
+            const ano = document.getElementById(p?`${p}-ano`:'ano').value;
+            const temp = document.getElementById(p?`${p}-temporada`:'temporada').value;
+            const centro = document.getElementById(p?`${p}-centro`:'centro-logistico').value || document.getElementById('cpse-centro-logistico').value;
+            const sem = document.getElementById(p?`${p}-semana`:'semana').value;
+            const com = document.getElementById(p?`${p}-comentario`:'comentario').value;
+
+            const rows = [];
+            Object.keys(equipMap).forEach((sys, si) => {
+                equipMap[sys].forEach((nom, ei) => {
+                    const uid = `${prefix}${si}_${ei}`;
+                    rows.push({
+                        modulo, ano, temporada: temp, proceso: sys, equipo: nom, fecha: date,
+                        ho: getDecimalFromSelectors(uid, 'HO'), hmp: getDecimalFromSelectors(uid, 'HMP'),
+                        hr: parseFloat(document.getElementById(`eq_${uid}_HR`).textContent),
+                        hc: getDecimalFromSelectors(uid, 'HC'), suma_horas: 24,
+                        centro_logistico: centro, comentario: com, semana: sem
+                    });
+                });
+            });
+            const { error } = await supabaseClient.from(MODULE_TABLES[modulo]).upsert(rows);
+            if (error) alert("Error: " + error.message); else alert(`✅ Datos de ${modulo} guardados correctamente.`);
+        }
+
+document.getElementById('chmuraBtnSave').onclick = () => handleSave('CHMURA', chmuraEquips, 'ch_', 'fecha');
+        document.getElementById('cpseBtnSave').onclick = () => handleSave('CPSE', cpseEquips, 'cpse_', 'cpse-fecha');
+        document.getElementById('ggeeBtnSave').onclick = () => handleSave('GGEE', {"GGEE": ggeeList}, 'ggee_', 'ggee-fecha');
+        document.getElementById('rsBtnSave').onclick = () => handleSave('RS', {"RS": rsList}, 'rs_', 'rs-fecha');
+
+        document.getElementById('cfBtnSave').onclick = async () => {
+            const date = document.getElementById('cf-fecha').value;
+            const equipos = cfMotores.map((n, i) => ({ nombre: n, hini: document.getElementById(`mot_${i}_hini`).value, hfin: document.getElementById(`mot_${i}_hfin`).value, lini: document.getElementById(`mot_${i}_lini`).value, lfin: document.getElementById(`mot_${i}_lfin`).value, diesel: document.getElementById(`mot_${i}_diesel`).value, ho: parseFloat(document.getElementById(`mot_${i}_total`).textContent) }));
+            const auxiliares = cfMotoresAux.map((n, i) => ({ nombre: n, hini: document.getElementById(`motaux_${i}_hini`).value, hfin: document.getElementById(`motaux_${i}_hfin`).value, lini: document.getElementById(`motaux_${i}_lini`)?.value || '0', lfin: document.getElementById(`motaux_${i}_lfin`)?.value || '0', diesel: document.getElementById(`motaux_${i}_diesel`).value, ho: parseFloat(document.getElementById(`motaux_${i}_total`).textContent) }));
+            
+            const { error } = await supabaseClient.from('casa_fuerza_diario').upsert({ fecha: date, equipos_json: equipos, auxiliares_json: auxiliares });
+            
+            if (error) alert(error.message); 
+            else {
+                const normalize = (s) => s ? s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() : '';
+                for (let eq of [...equipos, ...auxiliares]) {
+                    if (eq.ho > 0) {
+                        const conf = oilConfigs.find(c => normalize(c.equipo_nombre) === normalize(eq.nombre));
+                        // VALIDACIÓN: Solo sumar si la fecha del log es >= a la fecha del último cambio
+                        if (conf && date >= (conf.ultimo_cambio_fecha || '0000-00-00')) {
+                            await supabaseClient.from('casa_fuerza_config').update({ 
+                                horas_acumuladas_base: (conf.horas_acumuladas_base || 0) + eq.ho,
+                                horas_totales_historicas: (conf.horas_totales_historicas || 0) + eq.ho,
+                                ultima_fecha_registro: date 
+                            }).eq('equipo_nombre', conf.equipo_nombre);
+                        }
+                    }
+                }
+                alert("✅ Casa Fuerza guardado y contadores actualizados.");
+                fetchOilConfigs();
+            }
+        };
+
+        // Limpiar formulario al cambiar la fecha para evitar errores
+        ['chmura-fecha', 'cpse-fecha', 'ggee-fecha', 'rs-fecha', 'cf-fecha'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                el.addEventListener('change', async () => {
+                    const container = el.closest('.screen') || el.closest('.card');
+                    if(container) {
+                        container.querySelectorAll('.hm-input').forEach(inp => {
+                            if (inp.type === 'date' || inp.type === 'month' || inp.tagName === 'SELECT') return;
+                            if (inp.tagName === 'INPUT') inp.value = inp.id.includes('diesel') ? '0' : (inp.id.includes('lini') || inp.id.includes('lfin') ? '0' : '0.00');
+                            else inp.textContent = '0.00';
+                        });
+                    }
+                    if (id === 'cf-fecha') {
+                        await loadCFDataForDate(el.value);
+                    }
+                });
+            }
+        });
+
+        async function loadCFDataForDate(fecha) {
+            if (!fecha) return;
+            const { data } = await supabaseClient.from('casa_fuerza_diario').select('*').eq('fecha', fecha).single();
+            if (data) {
+                if (data.equipos_json) {
+                    data.equipos_json.forEach((eq, i) => {
+                        const hIniInp = document.getElementById(`mot_${i}_hini`);
+                        const hFinInp = document.getElementById(`mot_${i}_hfin`);
+                        const lIniInp = document.getElementById(`mot_${i}_lini`);
+                        const lFinInp = document.getElementById(`mot_${i}_lfin`);
+                        const dieselInp = document.getElementById(`mot_${i}_diesel`);
+                        if (hIniInp) hIniInp.value = eq.hini !== undefined ? eq.hini : '0.00';
+                        if (hFinInp) { hFinInp.value = eq.hfin !== undefined ? eq.hfin : '0.00'; hFinInp.dispatchEvent(new Event('input')); }
+                        if (lIniInp) lIniInp.value = eq.lini !== undefined ? eq.lini : '0';
+                        if (lFinInp) lFinInp.value = eq.lfin !== undefined ? eq.lfin : '0';
+                        if (dieselInp) dieselInp.value = eq.diesel !== undefined ? eq.diesel : '0';
+                    });
+                }
+                if (data.auxiliares_json) {
+                    data.auxiliares_json.forEach((eq, i) => {
+                        const hIniInp = document.getElementById(`motaux_${i}_hini`);
+                        const hFinInp = document.getElementById(`motaux_${i}_hfin`);
+                        const lIniInp = document.getElementById(`motaux_${i}_lini`);
+                        const lFinInp = document.getElementById(`motaux_${i}_lfin`);
+                        const dieselInp = document.getElementById(`motaux_${i}_diesel`);
+                        if (hIniInp) hIniInp.value = eq.hini !== undefined ? eq.hini : '0.00';
+                        if (hFinInp) { hFinInp.value = eq.hfin !== undefined ? eq.hfin : '0.00'; hFinInp.dispatchEvent(new Event('input')); }
+                        if (lIniInp) lIniInp.value = eq.lini !== undefined ? eq.lini : '0';
+                        if (lFinInp) lFinInp.value = eq.lfin !== undefined ? eq.lfin : '0';
+                        if (dieselInp) dieselInp.value = eq.diesel !== undefined ? eq.diesel : '0';
+                    });
+                }
+            }
+        }
+
+        // 9. EVENTOS REPORTES Y MODALES
+        document.getElementById('chartModalClose').onclick = () => chartModal.style.display = 'none';
+        document.getElementById('dailyReportModalClose').onclick = () => document.getElementById('dailyReportModalOverlay').style.display = 'none';
+        document.getElementById('btnRealPrintDaily').onclick = async () => {
+            const originalElement = document.getElementById('dailyReportBody');
+            
+            const cloneContainer = document.createElement('div');
+            cloneContainer.className = 'pdf-clone-container';
+            cloneContainer.style.position = 'fixed'; 
+            cloneContainer.style.top = '0px';
+            cloneContainer.style.left = '0px'; // DENTRO de los límites visuales (html2canvas lo ignoraba si estaba muy lejos)
+            cloneContainer.style.width = '794px';
+            cloneContainer.style.background = '#ffffff';
+            cloneContainer.style.padding = '20px';
+            cloneContainer.style.boxSizing = 'border-box';
+            cloneContainer.style.zIndex = '-9999'; // Escondido DETRÁS de la página para que no haya flash visual
+            cloneContainer.style.opacity = '1';
+            cloneContainer.style.pointerEvents = 'none';
+            
+            const clone = originalElement.cloneNode(true);
+            
+            clone.style.animation = 'none';
+            clone.style.opacity = '1';
+            clone.style.transform = 'none';
+            clone.style.visibility = 'visible';
+            
+            const originalCanvases = originalElement.querySelectorAll('canvas');
+            const clonedCanvases = clone.querySelectorAll('canvas');
+            originalCanvases.forEach((canvas, index) => {
+                const img = document.createElement('img');
+                img.src = canvas.toDataURL('image/png', 1.0);
+                img.style.width = '100%';
+                img.style.height = 'auto';
+                const clonedCanvas = clonedCanvases[index];
+                if (clonedCanvas && clonedCanvas.parentNode) {
+                    clonedCanvas.parentNode.replaceChild(img, clonedCanvas);
+                }
+            });
+            
+            cloneContainer.appendChild(clone);
+            document.body.appendChild(cloneContainer);
+            
+            try {
+                await new Promise(r => setTimeout(r, 200));
+                
+                if (typeof html2canvas === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+                    document.head.appendChild(script);
+                    await new Promise(r => script.onload = r);
+                }
+                
+                // La configuración EXACTA que probaste y funcionó
+                const canvas = await html2canvas(cloneContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    scrollX: 0,
+                    scrollY: 0
+                });
+                
+                
+                
+                if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
+                    const script2 = document.createElement('script');
+                    script2.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+                    document.head.appendChild(script2);
+                    await new Promise(r => script2.onload = r);
+                }
+                
+                const jsPDF = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                
+                // Usar getters compatibles con cualquier versión de jsPDF
+                const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+                const margin = 10;
+                const usableWidth = pageWidth - (margin * 2);
+                const usablePageHeight = pageHeight - (margin * 2);
+                
+                const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                const totalPdfHeight = (canvas.height * usableWidth) / canvas.width;
+                
+                const containerRect = cloneContainer.getBoundingClientRect();
+                const scaleToPdf = usableWidth / containerRect.width;
+                
+                const unbreakables = Array.from(cloneContainer.querySelectorAll('.cf-engine-card, tr, .hours-grid, .accordion-header, h3, h4, .unbreakable-chart-wrapper'));
+                const pageBreaks = unbreakables.map(el => {
+                    const rect = el.getBoundingClientRect();
+                    return {
+                        top: (rect.top - containerRect.top) * scaleToPdf,
+                        bottom: (rect.bottom - containerRect.top) * scaleToPdf
+                    };
+                });
+                
+                let currentPdfY = 0;
+                let pageNumber = 1;
+                
+                while (currentPdfY < totalPdfHeight) {
+                    if (pageNumber > 1) {
+                        doc.addPage();
+                    }
+                    
+                    let targetCut = currentPdfY + usablePageHeight;
+                    let actualCut = targetCut;
+                    
+                    if (targetCut < totalPdfHeight) {
+                        let bestCut = targetCut;
+                        for (let i = 0; i < pageBreaks.length; i++) {
+                            const pb = pageBreaks[i];
+                            if (targetCut > pb.top + 1 && targetCut < pb.bottom - 1) {
+                                if (pb.top > currentPdfY + 5) {
+                                    if (pb.top < bestCut) {
+                                        bestCut = pb.top;
+                                    }
+                                }
+                            }
+                        }
+                        actualCut = bestCut;
+                    }
+                    
+                    const yPosition = margin - currentPdfY;
+                    doc.addImage(imgData, 'JPEG', margin, yPosition, usableWidth, totalPdfHeight);
+                    
+                    doc.setFillColor(255, 255, 255);
+                    doc.rect(0, 0, pageWidth, margin, 'F');
+                    
+                    const drawHeight = actualCut - currentPdfY;
+                    doc.rect(0, margin + drawHeight, pageWidth, pageHeight, 'F');
+                    
+                    currentPdfY = actualCut;
+                    pageNumber++;
+                }
+                
+                const fecha = document.getElementById('cf-fecha').value;
+                document.body.removeChild(cloneContainer);
+                doc.save(`Reporte_Diario_CasaFuerza_${fecha}.pdf`);
+                
+            } catch (err) {
+                console.error(err);
+                alert("Error: " + (err.message || err));
+                if (document.body.contains(cloneContainer)) document.body.removeChild(cloneContainer);
+            }
+        };
+
+        
+        document.getElementById('btnDownloadMonthlyPDF').onclick = async () => {
+            const originalElement = document.getElementById('chartModalBody');
+            
+            const cloneContainer = document.createElement('div');
+            cloneContainer.className = 'pdf-clone-container';
+            cloneContainer.style.position = 'fixed'; 
+            cloneContainer.style.top = '0px';
+            cloneContainer.style.left = '0px';
+            cloneContainer.style.width = '794px';
+            cloneContainer.style.background = '#ffffff';
+            cloneContainer.style.padding = '20px';
+            cloneContainer.style.boxSizing = 'border-box';
+            cloneContainer.style.zIndex = '-9999';
+            cloneContainer.style.opacity = '1';
+            cloneContainer.style.pointerEvents = 'none';
+            
+            const clone = originalElement.cloneNode(true);
+            clone.style.animation = 'none';
+            clone.style.opacity = '1';
+            clone.style.transform = 'none';
+            clone.style.visibility = 'visible';
+            
+            const originalCanvases = originalElement.querySelectorAll('canvas');
+            const clonedCanvases = clone.querySelectorAll('canvas');
+            originalCanvases.forEach((canvas, index) => {
+                const img = document.createElement('img');
+                img.src = canvas.toDataURL('image/png', 1.0);
+                img.style.width = '100%';
+                img.style.height = 'auto';
+                const clonedCanvas = clonedCanvases[index];
+                if (clonedCanvas && clonedCanvas.parentNode) {
+                    clonedCanvas.parentNode.replaceChild(img, clonedCanvas);
+                }
+            });
+            
+            cloneContainer.appendChild(clone);
+            document.body.appendChild(cloneContainer);
+            
+            try {
+                await new Promise(r => setTimeout(r, 200));
+                
+                if (typeof html2canvas === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+                    document.head.appendChild(script);
+                    await new Promise(r => script.onload = r);
+                }
+                
+                const canvas = await html2canvas(cloneContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    scrollX: 0,
+                    scrollY: 0
+                });
+                
+                if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
+                    const script2 = document.createElement('script');
+                    script2.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+                    document.head.appendChild(script2);
+                    await new Promise(r => script2.onload = r);
+                }
+                
+                const jsPDF = window.jspdf ? window.jspdf.jsPDF : window.jsPDF;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                
+                const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+                const margin = 10;
+                const usableWidth = pageWidth - (margin * 2);
+                const usablePageHeight = pageHeight - (margin * 2);
+                
+                const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                const totalPdfHeight = (canvas.height * usableWidth) / canvas.width;
+                
+                const containerRect = cloneContainer.getBoundingClientRect();
+                const scaleToPdf = usableWidth / containerRect.width;
+                
+                const unbreakables = Array.from(cloneContainer.querySelectorAll('.cf-engine-card, tr, .hours-grid, .accordion-header, h3, h4, .unbreakable-chart-wrapper'));
+                const pageBreaks = unbreakables.map(el => {
+                    const rect = el.getBoundingClientRect();
+                    return {
+                        top: (rect.top - containerRect.top) * scaleToPdf,
+                        bottom: (rect.bottom - containerRect.top) * scaleToPdf
+                    };
+                });
+                
+                let currentPdfY = 0;
+                let pageNumber = 1;
+                
+                while (currentPdfY < totalPdfHeight) {
+                    if (pageNumber > 1) {
+                        doc.addPage();
+                    }
+                    
+                    let targetCut = currentPdfY + usablePageHeight;
+                    let actualCut = targetCut;
+                    
+                    if (targetCut < totalPdfHeight) {
+                        let bestCut = targetCut;
+                        for (let i = 0; i < pageBreaks.length; i++) {
+                            const pb = pageBreaks[i];
+                            if (targetCut > pb.top + 1 && targetCut < pb.bottom - 1) {
+                                if (pb.top > currentPdfY + 5) {
+                                    if (pb.top < bestCut) {
+                                        bestCut = pb.top;
+                                    }
+                                }
+                            }
+                        }
+                        actualCut = bestCut;
+                    }
+                    
+                    const yPosition = margin - currentPdfY;
+                    doc.addImage(imgData, 'JPEG', margin, yPosition, usableWidth, totalPdfHeight);
+                    
+                    doc.setFillColor(255, 255, 255);
+                    doc.rect(0, 0, pageWidth, margin, 'F');
+                    
+                    const drawHeight = actualCut - currentPdfY;
+                    doc.rect(0, margin + drawHeight, pageWidth, pageHeight, 'F');
+                    
+                    currentPdfY = actualCut;
+                    pageNumber++;
+                }
+                
+                const title = document.getElementById('chartModalTitle').innerText;
+                const filter = document.getElementById('chartMonthFilter').value;
+                document.body.removeChild(cloneContainer);
+                doc.save(`${title}_${filter || 'Mensual'}.pdf`);
+                
+            } catch (err) {
+                console.error(err);
+                alert("Error: " + (err.message || err));
+                if (document.body.contains(cloneContainer)) document.body.removeChild(cloneContainer);
+            }
+        };
+
+        // Al cambiar de mes en el Dashboard Mensual, recargar
+        document.getElementById('chartMonthFilter').onchange = () => {
+            if (currentChartModule) openCharts(currentChartModule);
+        };
+
+        const currentModals = ['chmura', 'cpse', 'ggee', 'rs'];
+
+        async function handleExportExcel(modulo) {
+            alert(`Iniciando exportación de Excel para ${modulo}...`);
+            try {
+                const table = MODULE_TABLES[modulo] || (modulo === 'CASA_FUERZA' ? 'casa_fuerza_diario' : null);
+                if (!table) {
+                    alert("Error: Tabla no encontrada para este módulo.");
+                    return;
+                }
+                
+                const filterValue = document.getElementById('chartMonthFilter') ? document.getElementById('chartMonthFilter').value : '';
+                let query = supabaseClient.from(table).select('*').order('fecha', {ascending:true});
+                
+                if (filterValue) {
+                    const [y, m] = filterValue.split('-');
+                    const firstDay = `${y}-${m}-01`;
+                    const lastDayDate = new Date(y, m, 0);
+                    const lastDay = `${y}-${m}-${String(lastDayDate.getDate()).padStart(2, '0')}`;
+                    query = query.gte('fecha', firstDay).lte('fecha', lastDay);
+                }
+                
+                const { data, error } = await query;
+                if (error || !data || data.length === 0) { alert('No hay datos para exportar.'); return; }
+
+                if (typeof XLSX === 'undefined') {
+                    throw new Error("La librería XLSX no se cargó correctamente.");
+                }
+
+                const rows = [];
+                if (modulo === 'CASA_FUERZA') {
+                    rows.push(['Fecha', 'Equipos (JSON)', 'Auxiliares (JSON)']);
+                    data.forEach(row => {
+                        rows.push([
+                            row.fecha,
+                            JSON.stringify(row.equipos_json || []),
+                            JSON.stringify(row.auxiliares_json || [])
+                        ]);
+                    });
+                } else {
+                    rows.push(['Fecha', 'Sistema', 'Equipo', 'H. Inicio', 'H. Fin', 'Total HO', 'HMP', 'HC', 'Diésel']);
+                    data.forEach(row => {
+                        if (row.data_json) {
+                            Object.keys(row.data_json).forEach(sys => {
+                                row.data_json[sys].forEach(eq => {
+                                    if (eq.ho > 0 || eq.diesel > 0) {
+                                        rows.push([row.fecha, sys, eq.nombre, eq.hini||'', eq.hfin||'', eq.ho||0, eq.hmp||0, eq.hc||0, eq.diesel||0]);
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Reporte");
+                XLSX.writeFile(wb, `Reporte_${modulo}_${new Date().getTime()}.xlsx`);
+                
+                alert("Descarga completada.");
+
+            } catch (e) {
+                console.error(e);
+                alert("Error crítico en Exportar: " + e.message);
+            }
+        }
+        
+        currentModals.forEach(m => { 
+            document.getElementById(`${m}BtnChart`).onclick = () => openCharts(m.toUpperCase()); 
+            document.getElementById(`${m}BtnExport`).onclick = () => handleExportExcel(m.toUpperCase());
+        });
+        document.getElementById('cfBtnExport').onclick = () => handleExportExcel('CASA_FUERZA');
+        
+        function getPotenciaNominal(nombre) {
+            if (!nombre) return 1000;
+            const m = nombre.match(/potencia nominal (\d+)/i);
+            return m ? parseFloat(m[1]) : 1000;
+        }
+
+        function getEngineSpec(nombre) {
+            const n = (nombre || '').toUpperCase();
+            
+            let ref_efi = 12.0;
+            if (n.includes("N°1") || n.includes("N° 1") || n.includes("Nº1") || n.includes("Nº 1")) ref_efi = 12.177;
+            if (n.includes("N°3") || n.includes("N° 3") || n.includes("Nº3") || n.includes("Nº 3")) ref_efi = 12.347;
+            if (n.includes("N°4") || n.includes("N° 4") || n.includes("Nº4") || n.includes("Nº 4")) ref_efi = 10.948;
+            if (n.includes("N°5") || n.includes("N° 5") || n.includes("Nº5") || n.includes("Nº 5")) ref_efi = 15.215;
+            if (n.includes("N°6") || n.includes("N° 6") || n.includes("Nº6") || n.includes("Nº 6")) ref_efi = 12.201;
+            if (n.includes("N°7") || n.includes("N° 7") || n.includes("Nº7") || n.includes("Nº 7")) ref_efi = 13.006;
+            if (n.includes("N°9") || n.includes("N° 9") || n.includes("Nº9") || n.includes("Nº 9")) ref_efi = 13.643;
+            if (n.includes("N°10") || n.includes("N° 10") || n.includes("Nº10") || n.includes("Nº 10")) ref_efi = 5.592;
+            if (n.includes("N°11") || n.includes("N° 11") || n.includes("Nº11") || n.includes("Nº 11")) ref_efi = 10.815;
+
+            let spec = { efectiva: getPotenciaNominal(nombre), tension: 440, fp: 0.8, ref_efi: ref_efi };
+            if (n.includes("BURMEISTER 1")) spec.efectiva = 600;
+            if (n.includes("BURMEISTER 3")) spec.efectiva = 600;
+            if (n.includes("KTA 19")) spec.efectiva = 400;
+            if (n.includes("C18")) spec.efectiva = 520;
+            if (n.includes("KTA 50")) spec.efectiva = 1000;
+            if (n.includes("CAT 3512 (PISCO)")) spec.efectiva = 800;
+            if (n.includes("CAT 3512 B")) spec.efectiva = 1220;
+            if (n.includes("CAT 3306")) { spec.efectiva = 160; }
+            if (n.includes("PERKINS")) { spec.efectiva = 75; spec.tension = 220; }
+            
+            return spec;
+        }
+
+        async function generateDailyReport() {
+            const fecha = document.getElementById('cf-fecha').value;
+            if(!fecha) { alert('Seleccione una fecha primero.'); return; }
+            
+            const modal = document.getElementById('dailyReportModalOverlay');
+            const body = document.getElementById('dailyReportBody');
+            modal.style.display = 'block';
+            body.innerHTML = 'Generando reporte...';
+            
+            try {
+                const {data: dailyData} = await supabaseClient.from('casa_fuerza_diario').select('*').eq('fecha', fecha);
+                const {data: opsData} = await supabaseClient.from('datos_operacionales').select('*').eq('fecha', fecha);
+                
+                let html = `<div style="text-align:center; margin-bottom:20px;">
+                    <h1 style="color:var(--primary-color); margin:0;">REPORTE DIARIO DE OPERACIÓN - CASA DE FUERZA</h1>
+                    <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                        <p style="margin:0; font-size:16px;">Fecha: <b>${fecha}</b></p>
+                        <p style="margin:0; font-size:14px; color:#555;">Operador: <b>${window.activeOperatorName || 'No identificado'}</b></p>
+                    </div>
+                </div>
+                <div class="print-card" style="border:2px solid var(--primary-color); border-radius:12px; padding:15px; margin-bottom:20px; page-break-inside: avoid;">
+                    <h3 style="background:var(--primary-color); color:#fff; padding:10px; margin:-15px -15px 15px -15px; border-radius:10px 10px 0 0; font-size:15px;">Potencia Generada Total por Equipo (kWh)</h3>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="overallDailyChart"></canvas>
+                    </div>
+                </div>`;
+                
+                if (!dailyData || dailyData.length === 0) {
+                    body.innerHTML = html + `<p style="text-align:center; padding:30px;">No hay equipos registrados en esta fecha.</p>`;
+                    return;
+                }
+
+                // Extraer todos los equipos únicos de la fila del día
+                let allEqData = [];
+                dailyData.forEach(d => {
+                    if (d.equipos_json) allEqData = allEqData.concat(d.equipos_json);
+                    if (d.auxiliares_json) allEqData = allEqData.concat(d.auxiliares_json);
+                });
+
+                let chartConfigs = [];
+                let overallHourlyData = [];
+
+                allEqData.forEach((eqData) => {
+                    if(!eqData || eqData.ho === 0) return;
+                    const eq = eqData.nombre;
+                    
+                    const mIdx = cfMotores.indexOf(eq);
+                    const aIdx = cfMotoresAux.indexOf(eq);
+                    const eqId = mIdx !== -1 ? `mot_${mIdx}` : (aIdx !== -1 ? `motaux_${aIdx}` : eq);
+                    const eqOps = opsData ? opsData.filter(o => o.equipo_id === eqId || o.equipo_id === eq).sort((a,b) => {
+                        const getVal = h => {
+                            const hr = parseInt(h.split(':')[0]);
+                            return hr === 0 ? 24 : hr;
+                        };
+                        return getVal(a.hora) - getVal(b.hora);
+                    }) : [];
+                    
+                    let energiaProducida = 0;
+                    let energiaConsumida = 0;
+                    const spec = getEngineSpec(eq);
+                    const isAux = cfMotoresAux.includes(eq);
+
+                    let sumaAmperaje = 0;
+                    eqOps.forEach(op => {
+                        if(op.amperaje != null) {
+                            const fpUsar = (op.factor_potencia && op.factor_potencia > 0) ? op.factor_potencia : spec.fp;
+                            const kw = (1.732 * spec.tension * op.amperaje * fpUsar) / 1000;
+                            sumaAmperaje += kw;
+                        }
+                    });
+
+                    // Para todos los equipos, la energía producida es la suma de los registros operacionales por hora
+                    energiaProducida = sumaAmperaje;
+
+                    if (!isAux) {
+                        // Motores Principales (Generadores): Consumida = Lec. Final - Lec. Inicial
+                        const lini = parseFloat(eqData.lini) || 0;
+                        const lfin = parseFloat(eqData.lfin) || 0;
+                        energiaConsumida = lfin >= lini ? (lfin - lini) : 0;
+                    } else {
+                        // Auxiliares: Consumida = Suma de amperaje por hora (igual a la producida)
+                        energiaConsumida = sumaAmperaje;
+                    }
+                    
+                    const diesel = eqData.diesel || 0;
+                    const ef = (diesel > 0 && energiaProducida > 0) ? (energiaProducida / diesel).toFixed(2) : '0.00';
+                    
+                    html += `
+                    <div class="print-card" style="border:2px solid var(--primary-color); border-radius:12px; padding:15px; margin-bottom:20px; page-break-inside: avoid;">
+                        <h3 style="background:var(--primary-color); color:#fff; padding:10px; margin:-15px -15px 15px -15px; border-radius:10px 10px 0 0;">${eq}</h3>
+                        
+                        <div style="display:grid; grid-template-columns: repeat(${isAux ? 2 : 4}, 1fr); gap:10px; margin-bottom:15px; font-size:12px; text-align:center;">
+                            <div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px;"><b>H. Inicio:</b><br>${eqData.hini || '-'}</div>
+                            <div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px;"><b>H. Fin:</b><br>${eqData.hfin || '-'}</div>
+                            ${isAux ? '' : `
+                            <div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px;"><b>Lec. Inicio:</b><br>${eqData.lini || '-'}</div>
+                            <div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px;"><b>Lec. Fin:</b><br>${eqData.lfin || '-'}</div>
+                            `}
+                        </div>
+                        
+                        <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; margin-bottom:15px; text-align:center;">
+                            <div style="background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:6px; color:#991b1b;">
+                                <span style="font-size:10px; font-weight:700;">TOTAL HO</span><br>
+                                <span style="font-size:16px; font-weight:900;">${Number(eqData.ho).toFixed(1)} h</span>
+                            </div>
+                            <div style="background:#fffbeb; border:1px solid #fde68a; padding:10px; border-radius:6px; color:#92400e;">
+                                <span style="font-size:10px; font-weight:700;">DIÉSEL</span><br>
+                                <span style="font-size:16px; font-weight:900;">${diesel} gal</span>
+                            </div>
+                            <div style="background:#fefce8; border:1px solid #fef08a; padding:10px; border-radius:6px; color:#854d0e;">
+                                <span style="font-size:10px; font-weight:700;">ENERGÍA CONSUMIDA</span><br>
+                                <span style="font-size:16px; font-weight:900;">${energiaConsumida.toFixed(1)} kWh</span>
+                            </div>
+                            <div style="background:#EAF4F5; padding:10px; border-radius:6px;">
+                                <span style="font-size:10px; color:var(--primary-color); font-weight:700;">ENERGÍA PRODUCIDA</span><br>
+                                <span style="font-size:16px; font-weight:900;">${energiaProducida.toFixed(1)} kWh</span>
+                            </div>
+                            <div style="background:#EAF6F6; padding:10px; border-radius:6px; color:#006972;">
+                                <span style="font-size:10px; font-weight:700;">EFICIENCIA</span><br>
+                                <span style="font-size:16px; font-weight:900;">${ef}</span>
+                            </div>
+                        </div>
+                        
+                        <h4 style="margin:0 0 10px 0; font-size:13px; border-bottom:1px solid #ccc; padding-bottom:5px;">Registro Operacional (Hora por Hora)</h4>
+                        <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:center;">
+                            <tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Hora</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">P. Aceite</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">T. Refrig</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">RPM</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Frec.</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Amp.</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">FP</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Potencia (kW)</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Carga (%)</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Estado</th>
+                            </tr>
+                            ${eqOps.length === 0 ? `<tr><td colspan="10" style="padding:10px; border:1px solid #e2e8f0;">Sin registros detallados en este día</td></tr>` : eqOps.map(op => {
+                                const fpUsar = (op.factor_potencia && op.factor_potencia > 0) ? op.factor_potencia : spec.fp;
+                                const kw = op.amperaje ? (1.732 * spec.tension * op.amperaje * fpUsar) / 1000 : 0;
+                                const fc = kw ? (kw / spec.efectiva) * 100 : 0;
+                                let color = "inherit";
+                                let estado = "Apagado";
+                                if(fc > 0 && fc < 40) { color = "#fee2e2"; estado = "Subcarga"; }
+                                else if(fc >= 40 && fc < 75) { color = "#fef3c7"; estado = "Normal"; }
+                                else if(fc >= 75) { color = "#dcfce3"; estado = "Óptimo"; }
+                                
+                                return `<tr style="background:${color};">
+                                    <td style="padding:4px; border:1px solid #e2e8f0; font-weight:700;">${op.hora}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.p_aceite || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.t_refrig || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.vel_mtr || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.frecuencia || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.amperaje || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.factor_potencia || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0; font-weight:700;">${kw ? kw.toFixed(1) : '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0; font-weight:700;">${fc ? fc.toFixed(1)+'%' : '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0; font-weight:700;">${estado}</td>
+                                </tr>`;
+                            }).join('')}
+                        </table>
+                        ${eqOps.length > 0 ? `<div style="margin-top:20px; height:220px; position:relative;"><canvas id="chart_${eqId}"></canvas></div>` : ''}
+                    </div>`;
+                    
+                    if (eqOps.length > 0) {
+                        chartConfigs.push({
+                            id: `chart_${eqId}`,
+                            labels: eqOps.map(op => op.hora),
+                            data: eqOps.map(op => op.amperaje || 0)
+                        });
+                    }
+                });
+                
+                // Add Signature to PDF
+                html += `<div style="margin-top: 40px; text-align:right; font-size:12px; color:var(--text-muted);">
+                    <p><b>Elaborado por:</b> ${window.activeOperatorName || 'Operador Autorizado'}</p>
+                    <p>Generado el: ${new Date().toLocaleString('es-PE')}</p>
+                </div>`;
+                
+                if (html.indexOf('print-card') === -1) {
+                    html += `<p style="text-align:center; padding:30px;">No hay equipos registrados con horas de operación en esta fecha.</p>`;
+                }
+                
+                body.innerHTML = html;
+                
+                // Crear el gráfico global primero
+                const overallCtx = document.getElementById('overallDailyChart');
+                if (overallCtx) {
+                    new Chart(overallCtx, {
+                        type: 'line',
+                        data: {
+                            labels: Array.from({length: 24}, (_, i) => (i+1).toString().padStart(2,'0') + ':00'),
+                            datasets: overallHourlyData
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom' },
+                                tooltip: { mode: 'index', intersect: false }
+                            },
+                            scales: {
+                                y: { beginAtZero: true, title: { display: true, text: 'Potencia (kWh)' } }
+                            },
+                            animation: {
+                                onComplete: function() {
+                                    const ctx = this.ctx;
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'bottom';
+                                    ctx.font = 'bold 11px Inter, sans-serif';
+                                    
+                                    this.data.datasets.forEach(function(dataset, i) {
+                                        const meta = this.getDatasetMeta(i);
+                                        if (meta.hidden) return;
+                                        meta.data.forEach(function(bar, index) {
+                                            const data = dataset.data[index];
+                                            if (data > 0) {
+                                                ctx.fillStyle = 'red';
+                                                ctx.fillText(data.toFixed(1), bar.x, bar.y - 5);
+                                            }
+                                        });
+                                    }, this);
+                                }
+                            }
+                        }
+                    });
+                }
+
+                chartConfigs.forEach(conf => {
+                    const ctx = document.getElementById(conf.id);
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: conf.labels,
+                                datasets: [{
+                                    label: 'Amperaje (A)',
+                                    data: conf.data,
+                                    borderColor: '#55C2D2',
+                                    backgroundColor: 'rgba(85, 194, 210, 0.2)',
+                                    borderWidth: 2,
+                                    tension: 0.3,
+                                    fill: true,
+                                    pointRadius: 4,
+                                    pointBackgroundColor: '#fff',
+                                    pointBorderColor: '#55C2D2',
+                                    pointBorderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    title: { display: true, text: 'Curva de Amperaje', font: {size: 13} }
+                                },
+                                scales: {
+                                    y: { beginAtZero: true, title: { display: true, text: 'Amperaje (A)' } },
+                                    x: { title: { display: true, text: 'Hora' } }
+                                }
+                            }
+                        });
+                    }
+                });
+                
+            } catch (err) {
+                console.error(err);
+                body.innerHTML = `<p style="color:red; text-align:center;">Error al generar el reporte.</p>`;
+            }
+        }
+
+        const chartModal = document.getElementById('chartModalOverlay');
+        const chartBody = document.getElementById('chartModalBody');
+        const VIBRANT_PALETTE = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#42BB72', '#F78FB3', '#3DC1D3', '#E15F41'];
+        let activeCharts = [];
+        let currentChartModule = null;
+
+                async function openCharts(modulo) {
+            currentChartModule = modulo;
+            chartModal.style.display = 'block';
+            chartBody.innerHTML = '<div style="text-align:center;padding:40px;color:var(--primary-color);font-weight:600;">⏳ Calculando indicadores de ingeniería...</div>';
+            activeCharts.forEach(c => c.destroy()); activeCharts = [];
+            
+            try {
+                const isCF = (modulo === 'CASA_FUERZA');
+                const table = isCF ? 'casa_fuerza_diario' : MODULE_TABLES[modulo];
+                const filterValue = document.getElementById('chartMonthFilter') ? document.getElementById('chartMonthFilter').value : '';
+                
+                let query = supabaseClient.from(table).select('*').order('fecha', {ascending:true});
+                if (filterValue) {
+                    const [y, m] = filterValue.split('-');
+                    const firstDay = `${y}-${m}-01`;
+                    const lastDayDate = new Date(y, m, 0);
+                    const lastDay = `${y}-${m}-${String(lastDayDate.getDate()).padStart(2, '0')}`;
+                    query = query.gte('fecha', firstDay).lte('fecha', lastDay);
+                }
+                
+                const { data, error } = await query;
+                
+                let opData = [];
+                if (isCF && filterValue) {
+                    const [y, m] = filterValue.split('-');
+                    const firstDay = `${y}-${m}-01`;
+                    const lastDayDate = new Date(y, m, 0);
+                    const lastDay = `${y}-${m}-${String(lastDayDate.getDate()).padStart(2, '0')}`;
+                    const { data: od } = await supabaseClient.from('datos_operacionales').select('*').gte('fecha', firstDay).lte('fecha', lastDay);
+                    if (od) opData = od;
+                }
+
+                if (error) { chartBody.innerHTML = 'Error: ' + error.message; return; }
+                if (!data || data.length === 0) { chartBody.innerHTML = '<div style="text-align:center;padding:40px;">No hay datos suficientes para el período seleccionado.</div>'; return; }
+
+                chartBody.innerHTML = '';
+                const dates = [...new Set(data.map(d => d.fecha))];
+
+                function createCard(title) {
+                    const card = document.createElement('div');
+                    card.className = 'chart-card';
+                    card.innerHTML = `<h3 style="font-size:15px; color:#555; border-bottom:1px solid #eee; padding-bottom:8px; margin-top:0;">${title}</h3>
+                                      <div class="chart-wrapper"><canvas></canvas></div>`;
+                    chartBody.appendChild(card);
+                    return card.querySelector('canvas');
+                }
+
+                if (isCF) {
+                    let mData = [];
+                    data.forEach(d => {
+                        const eqList = [...(d.equipos_json || []), ...(d.auxiliares_json || [])];
+                        eqList.forEach(e => {
+                            if (e.ho > 0 || e.diesel > 0) mData.push({ fecha: d.fecha, equipo: e.nombre, ho: e.ho, diesel: e.diesel });
+                        });
+                    });
+                    
+                    const eqNames = [...new Set(mData.map(r => r.equipo))];
+                    
+                    
+                    const c1 = createCard('Consumo de Combustible vs Generación (KPI Mensual)');
+
+                    const kpiData = dates.map(d => {
+                        const dayRows = mData.filter(r => r.fecha === d);
+                        const totalDiesel = dayRows.reduce((acc, curr) => acc + (parseFloat(curr.diesel)||0), 0);
+                        
+                        const dayOps = opData.filter(o => o.fecha === d);
+                        let totalKwH = 0;
+                        dayOps.forEach(op => {
+                            const isAuxOp = op.equipo_id && op.equipo_id.startsWith('motaux_');
+                            if(!isAuxOp && op.amperaje != null) {
+                                let eqName = op.equipo_id;
+                                if (eqName && eqName.startsWith('mot_')) {
+                                    const mIdx = parseInt(eqName.split('_')[1]);
+                                    if (cfMotores[mIdx]) eqName = cfMotores[mIdx];
+                                }
+                                const spec = getEngineSpec(eqName);
+                                const fpUsar = (op.factor_potencia && op.factor_potencia > 0) ? op.factor_potencia : spec.fp;
+                                totalKwH += (1.732 * spec.tension * op.amperaje * fpUsar) / 1000;
+                            }
+                        });
+                        
+                        const efi = totalDiesel > 0 ? (totalKwH / totalDiesel) : 0;
+                        return { diesel: totalDiesel, kwh: totalKwH, efi };
+                    });
+                    
+                    activeCharts.push(new Chart(c1, {
+                        type: 'bar',
+                        data: {
+                            labels: dates,
+                            datasets: [
+                                { label: 'Consumo Diésel (gal)', data: kpiData.map(d => d.diesel), backgroundColor: 'rgba(239, 68, 68, 0.7)', yAxisID: 'y' },
+                                { label: 'Eficiencia Promedio (kWh/gal)', data: kpiData.map(d => d.efi), type: 'line', borderColor: '#3b82f6', borderWidth: 3, pointRadius: 4, fill: false, yAxisID: 'y1' }
+                            ]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            scales: {
+                                y: { type: 'linear', display: true, position: 'left', title: {display:true, text:'Galones'} },
+                                y1: { type: 'linear', display: true, position: 'right', grid: {drawOnChartArea:false}, title: {display:true, text:'kWh / gal'} }
+                            }
+                        }
+                    }));
+
+                    
+                    const globalEnergyCard = createCard('Energía Total Generada por Día (kWh)');
+                    const globalEnergyData = dates.map(d => {
+                        let totalDayKwH = 0;
+                        const dayOps = opData.filter(o => o.fecha === d);
+                        dayOps.forEach(op => {
+                            let eqName = op.equipo_id;
+                            if (eqName && eqName.startsWith('mot_')) {
+                                const mIdx = parseInt(eqName.split('_')[1]);
+                                if (cfMotores[mIdx]) eqName = cfMotores[mIdx];
+                            } else if (eqName && eqName.startsWith('motaux_')) {
+                                const aIdx = parseInt(eqName.split('_')[1]);
+                                if (cfMotoresAux[aIdx]) eqName = cfMotoresAux[aIdx];
+                            }
+                            
+                            if(op.amperaje != null) {
+                                const spec = getEngineSpec(eqName);
+                                const fpUsar = (op.factor_potencia && op.factor_potencia > 0) ? op.factor_potencia : spec.fp;
+                                totalDayKwH += (1.732 * spec.tension * op.amperaje * fpUsar) / 1000;
+                            }
+                        });
+                        return totalDayKwH;
+                    });
+                    
+                    activeCharts.push(new Chart(globalEnergyCard, {
+                        type: 'line',
+                        data: {
+                            labels: dates,
+                            datasets: [{
+                                label: 'Energía Generada Diaria Total (kWh)',
+                                data: globalEnergyData,
+                                borderColor: '#8b5cf6',
+                                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                                fill: true,
+                                tension: 0.3,
+                                pointBackgroundColor: '#fff',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { position: 'top', align: 'start' } },
+                            scales: { y: { beginAtZero: true, title: {display:true, text:'kWh'} } }
+                        }
+                    }));
+                    
+eqNames.forEach((eq, idx) => {
+                        const mIdx = cfMotores.indexOf(eq);
+                        const aIdx = cfMotoresAux.indexOf(eq);
+                        const eqId = mIdx !== -1 ? `mot_${mIdx}` : (aIdx !== -1 ? `motaux_${aIdx}` : eq);
+                        const eqDayOps = opData.filter(o => o.equipo_id === eqId || o.equipo_id === eq);
+                        const spec = getEngineSpec(eq);
+                        
+                        let eqKwH = 0;
+                        let ds_energia = [];
+                        let ds_ho = [];
+                        let ds_diesel = [];
+                        let efi_diaria = [];
+
+                        dates.forEach((d, i) => {
+                            const r = mData.find(x => x.fecha===d && x.equipo===eq);
+                            let ho = r ? parseFloat(r.ho || 0) : 0;
+                            let dsl = r ? parseFloat(r.diesel || 0) : 0;
+                            
+                            let eng = 0;
+                            const eqDayOpsD = opData.filter(o => o.fecha === d && (o.equipo_id === eqId || o.equipo_id === eq));
+                            eng = eqDayOpsD.reduce((acc, op) => {
+                                if (op.amperaje != null) {
+                                    const fpUsar = (op.factor_potencia && op.factor_potencia > 0) ? op.factor_potencia : spec.fp;
+                                    return acc + (1.732 * spec.tension * op.amperaje * fpUsar) / 1000;
+                                }
+                                return acc;
+                            }, 0);
+                            
+                            ds_energia.push(eng);
+                            ds_ho.push(ho);
+                            ds_diesel.push(dsl);
+                            efi_diaria.push(dsl > 0 ? (eng / dsl) : 0);
+                            eqKwH += eng;
+                        });
+
+                        const eqDiesel = ds_diesel.reduce((a,b)=>a+b,0);
+                        const efi = eqDiesel > 0 ? (eqKwH / eqDiesel).toFixed(2) : '0.00';
+                        const card = document.createElement('div');
+                        card.className = 'chart-card';
+                        card.style.background = '#fff';
+                        card.style.border = '1px solid #e2e8f0';
+                        card.style.color = '#333';
+                        card.style.padding = '20px';
+                        card.style.borderRadius = '8px';
+                        card.style.marginBottom = '20px';
+                        
+                        let hrHTML = '';
+                        let predominantState = 'Sin Datos';
+                        let predominantPercent = 0;
+                        let predominantColor = '#94a3b8';
+                        
+                        if (eqDayOps.length > 0) {
+                            const hours = [...new Set(eqDayOps.map(o => o.hora))].sort((a,b) => {
+                                const getVal = h => { const hr = parseInt(h.split(':')[0]); return hr === 0 ? 24 : hr; };
+                                return getVal(a) - getVal(b);
+                            });
+                            let subcarga = 0, normal = 0, optimo = 0, totalHours = hours.length;
+                            
+                            hours.forEach(h => {
+                                const opsH = eqDayOps.filter(o => o.hora === h);
+                                let avgFc = 0;
+                                opsH.forEach(op => {
+                                    const fpUsar = (op.factor_potencia && op.factor_potencia > 0) ? op.factor_potencia : spec.fp;
+                                    const kw = op.amperaje ? (1.732 * spec.tension * op.amperaje * fpUsar) / 1000 : 0;
+                                    avgFc += kw ? (kw/spec.efectiva)*100 : 0;
+                                });
+                                avgFc = avgFc / opsH.length;
+                                if (avgFc > 0) {
+                                    if (avgFc < 40) subcarga++;
+                                    else if (avgFc >= 40 && avgFc < 75) normal++;
+                                    else optimo++;
+                                }
+                            });
+                            
+                            const pSub = (subcarga / totalHours) * 100;
+                            const pNor = (normal / totalHours) * 100;
+                            const pOpt = (optimo / totalHours) * 100;
+                            
+                            if (pSub >= pNor && pSub >= pOpt) { predominantState = 'Subcarga'; predominantPercent = pSub; predominantColor = '#ef4444'; }
+                            else if (pNor >= pSub && pNor >= pOpt) { predominantState = 'Normal'; predominantPercent = pNor; predominantColor = '#f59e0b'; }
+                            else { predominantState = 'Óptimo'; predominantPercent = pOpt; predominantColor = '#10b981'; }
+
+                            hrHTML = `
+                            <div style="margin-top:15px; margin-bottom: 20px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <span style="font-size:14px; color:#475569; font-weight:700;">Distribución de carga — promedio semanal</span>
+                                </div>
+                                <div style="display:flex; height:18px; width:100%; border-radius:4px; overflow:hidden; background:#f1f5f9; margin-bottom: 8px;">
+                                    <div style="width:${pSub}%; background:#ef4444;" title="Subcarga (<40%): ${subcarga}h"></div>
+                                    <div style="width:${pNor}%; background:#f59e0b;" title="Normal (40-75%): ${normal}h"></div>
+                                    <div style="width:${pOpt}%; background:#10b981;" title="Óptimo (>75%): ${optimo}h"></div>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700;">
+                                    <span style="color:#ef4444;">Subcarga ${pSub.toFixed(0)}%</span>
+                                    <span style="color:#f59e0b;">Normal ${pNor.toFixed(0)}%</span>
+                                    <span style="color:#10b981;">Óptimo ${pOpt.toFixed(0)}%</span>
+                                </div>
+                            </div>`;
+                        }
+
+                        card.innerHTML = `<div style="margin-bottom:15px;">
+                            <div style="display:flex; align-items:center; gap: 10px; margin-bottom:15px;">
+                                <h3 style="font-size:18px; color:var(--primary-color); font-weight:800; margin:0;">${eq}</h3>
+                            </div>
+                            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; margin-bottom:15px; text-align:left;">
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px;">
+                                    <div style="font-size:11px; color:#64748b; font-weight:700; margin-bottom:5px;">PRODUCCIÓN</div>
+                                    <div style="font-size:24px; font-weight:900; color:#0f172a;">${eqKwH.toLocaleString('en-US', {maximumFractionDigits:0})} <span style="font-size:14px; color:#64748b; font-weight:500;">kWh</span></div>
+                                    <div style="font-size:11px; color:#64748b; margin-top:5px;">energía generada</div>
+                                </div>
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px;">
+                                    <div style="font-size:11px; color:#64748b; font-weight:700; margin-bottom:5px;">CONSUMO DIÉSEL</div>
+                                    <div style="font-size:24px; font-weight:900; color:#b45309;">${eqDiesel.toLocaleString('en-US', {maximumFractionDigits:0})} <span style="font-size:14px; color:#64748b; font-weight:500;">gal</span></div>
+                                    <div style="font-size:11px; color:#64748b; margin-top:5px;">semana analizada</div>
+                                </div>
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px;">
+                                    <div style="font-size:11px; color:#64748b; font-weight:700; margin-bottom:5px;">EFICIENCIA</div>
+                                    <div style="font-size:24px; font-weight:900; color:#b45309;">${efi} <span style="font-size:14px; color:#b45309; font-weight:500;">kWh/gal</span></div>
+                                    <div style="font-size:11px; color:#64748b; margin-top:5px;">referencia óptima: <span style="color:#10b981;">${spec.ref_efi} kWh/gal</span></div>
+                                </div>
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px;">
+                                    <div style="font-size:11px; color:#64748b; font-weight:700; margin-bottom:5px;">ESTADO PREDOMINANTE</div>
+                                    <div style="font-size:20px; font-weight:900; color:${predominantColor};">${predominantState}</div>
+                                    <div style="font-size:11px; color:#64748b; margin-top:5px;">${predominantPercent.toFixed(0)}% del tiempo operativo</div>
+                                </div>
+                            </div>
+                            ${hrHTML}
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px; height: 250px;">
+                                <div style="font-size:13px; font-weight:700; color:#334155; margin-bottom:10px;">Consumo diésel diario (gal)</div>
+                                <div style="position:relative; height:calc(100% - 25px); width:100%;"><canvas class="canvas-diesel"></canvas></div>
+                            </div>
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px; height: 250px;">
+                                <div style="font-size:13px; font-weight:700; color:#334155; margin-bottom:10px;">Energía generada diaria (kWh)</div>
+                                <div style="position:relative; height:calc(100% - 25px); width:100%;"><canvas class="canvas-energia"></canvas></div>
+                            </div>
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px; height: 250px;">
+                                <div style="font-size:13px; font-weight:700; color:#334155; margin-bottom:10px;">Eficiencia diaria (kWh/gal)</div>
+                                <div style="position:relative; height:calc(100% - 25px); width:100%;"><canvas class="canvas-efi"></canvas></div>
+                            </div>
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:15px; height: 250px;">
+                                <div style="font-size:13px; font-weight:700; color:#334155; margin-bottom:10px;">Horas de operación diarias</div>
+                                <div style="position:relative; height:calc(100% - 25px); width:100%;"><canvas class="canvas-ho"></canvas></div>
+                            </div>
+                        </div>`;
+                        chartBody.appendChild(card);
+
+                        activeCharts.push(new Chart(card.querySelector('.canvas-diesel'), {
+                            type: 'bar',
+                            data: { labels: dates, datasets: [{ label: 'Diésel gal', data: ds_diesel, backgroundColor: '#fca5a5' }] },
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'start', labels: { boxWidth: 10, padding: 10, color: '#64748b' } } }, scales: { y: { beginAtZero:true, grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } }, x: { grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } } } }
+                        }));
+
+                        activeCharts.push(new Chart(card.querySelector('.canvas-energia'), {
+                            type: 'bar',
+                            data: { labels: dates, datasets: [{ label: 'Energía kWh', data: ds_energia, backgroundColor: '#93c5fd' }] },
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'start', labels: { boxWidth: 10, padding: 10, color: '#64748b' } } }, scales: { y: { beginAtZero:true, grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } }, x: { grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } } } }
+                        }));
+
+                        activeCharts.push(new Chart(card.querySelector('.canvas-efi'), {
+                            type: 'line',
+                            data: { labels: dates, datasets: [
+                                { label: 'Eficiencia', data: efi_diaria, borderColor: '#f59e0b', backgroundColor: '#f59e0b', tension: 0.1, pointRadius: 4, fill: false },
+                                { label: `Referencia ${spec.ref_efi} kWh/gal`, data: Array(dates.length).fill(spec.ref_efi), borderColor: '#10b981', borderDash: [5, 5], pointRadius: 0, fill: false }
+                            ]},
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'start', labels: { boxWidth: 10, padding: 10, usePointStyle: true, color: '#64748b' } } }, scales: { y: { beginAtZero:true, max: Math.max(...efi_diaria, spec.ref_efi) * 1.2, grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } }, x: { grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } } } }
+                        }));
+
+                        activeCharts.push(new Chart(card.querySelector('.canvas-ho'), {
+                            type: 'bar',
+                            data: { labels: dates, datasets: [{ label: 'Horas trabajadas', data: ds_ho, backgroundColor: '#6ee7b7' }] },
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'start', labels: { boxWidth: 10, padding: 10, color: '#64748b' } } }, scales: { y: { beginAtZero:true, grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } }, x: { grid: { color: '#e2e8f0' }, ticks: { color: '#64748b' } } } }
+                        }));
+                    });
+                } else {
+                    data.forEach(d => {
+                        const title = d.equipo || d.guardia || 'Registro';
+                        const color = VIBRANT_PALETTE[Math.floor(Math.random() * VIBRANT_PALETTE.length)];
+                        const card = createCard(title);
+                        const cDates = [d.fecha];
+                        let ds = [];
+                        if (modulo === 'CHMURA' || modulo === 'CPSE') {
+                            ds = [d.r_inicial ? (d.r_final - d.r_inicial) : 0];
+                        } else if (modulo === 'GGEE' || modulo === 'RS') {
+                            ds = [d.h_final ? (d.h_final - d.h_inicial) : 0];
+                        }
+                        
+                        if (ds.length > 0) {
+                            activeCharts.push(new Chart(card, {
+                                type: 'bar',
+                                data: { labels: cDates, datasets: [ { label: title, data: ds, backgroundColor: color } ] },
+                                options: { responsive: true, maintainAspectRatio: false }
+                            }));
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Error en openCharts:", err);
+                chartBody.innerHTML = `<div style="padding:20px; color:red; border:1px solid red; background:#ffeeee; border-radius:8px;">
+                    <h4>Error calculando indicadores</h4>
+                    <p>${err.message}</p>
+                    <pre style="font-size:10px; overflow-x:auto;">${err.stack}</pre>
+                </div>`;
+            }
+        }
+
+        currentModals.forEach(m => { 
+            document.getElementById(`${m}BtnChart`).onclick = () => openCharts(m.toUpperCase()); 
+            document.getElementById(`${m}BtnExport`).onclick = () => handleExportExcel(m.toUpperCase());
+        });
+        document.getElementById('cfBtnExport').onclick = () => handleExportExcel('CASA_FUERZA');
+        
+        async function generateDailyReport() {
+            const fecha = document.getElementById('cf-fecha').value;
+            if(!fecha) { alert('Seleccione una fecha primero.'); return; }
+            
+            const modal = document.getElementById('dailyReportModalOverlay');
+            const body = document.getElementById('dailyReportBody');
+            modal.style.display = 'block';
+            body.innerHTML = 'Generando reporte...';
+            
+            try {
+                const {data: dailyData} = await supabaseClient.from('casa_fuerza_diario').select('*').eq('fecha', fecha);
+                const {data: opsData} = await supabaseClient.from('datos_operacionales').select('*').eq('fecha', fecha);
+                
+                let html = `<div style="text-align:center; margin-bottom:20px;">
+                    <h1 style="color:var(--primary-color); margin:0;">REPORTE DIARIO DE OPERACIÓN - CASA DE FUERZA</h1>
+                    <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                        <p style="margin:0; font-size:16px;">Fecha: <b>${fecha}</b></p>
+                        <p style="margin:0; font-size:14px; color:#555;">Operador: <b>${window.activeOperatorName || 'No identificado'}</b></p>
+                    </div>
+                </div>`;
+                
+                if (!dailyData || dailyData.length === 0) {
+                    body.innerHTML = html + `<p style="text-align:center; padding:30px;">No hay equipos registrados en esta fecha.</p>`;
+                    return;
+                }
+
+                // Extraer todos los equipos únicos de la fila del día
+                let allEqData = [];
+                dailyData.forEach(d => {
+                    if (d.equipos_json) allEqData = allEqData.concat(d.equipos_json);
+                    if (d.auxiliares_json) allEqData = allEqData.concat(d.auxiliares_json);
+                });
+
+                let chartConfigs = [];
+
+                allEqData.forEach((eqData) => {
+                    if(!eqData || eqData.ho === 0) return;
+                    const eq = eqData.nombre;
+                    
+                    const mIdx = cfMotores.indexOf(eq);
+                    const aIdx = cfMotoresAux.indexOf(eq);
+                    const eqId = mIdx !== -1 ? `mot_${mIdx}` : (aIdx !== -1 ? `motaux_${aIdx}` : eq);
+                    const eqOps = opsData ? opsData.filter(o => o.equipo_id === eqId || o.equipo_id === eq).sort((a,b) => {
+                        const getVal = h => {
+                            const hr = parseInt(h.split(':')[0]);
+                            return hr === 0 ? 24 : hr;
+                        };
+                        return getVal(a.hora) - getVal(b.hora);
+                    }) : [];
+                    
+                    let energiaProducida = 0;
+                    let energiaConsumida = 0;
+                    const spec = getEngineSpec(eq);
+                    const isAux = cfMotoresAux.includes(eq);
+
+                    let sumaAmperaje = 0;
+                    eqOps.forEach(op => {
+                        if(op.amperaje != null) {
+                            const fpUsar = (op.factor_potencia && op.factor_potencia > 0) ? op.factor_potencia : spec.fp;
+                            const kw = (1.732 * spec.tension * op.amperaje * fpUsar) / 1000;
+                            sumaAmperaje += kw;
+                        }
+                    });
+
+                    // Para todos los equipos, la energía producida es la suma de los registros operacionales por hora
+                    energiaProducida = sumaAmperaje;
+
+                    if (!isAux) {
+                        // Motores Principales (Generadores): Consumida = Lec. Final - Lec. Inicial
+                        const lini = parseFloat(eqData.lini) || 0;
+                        const lfin = parseFloat(eqData.lfin) || 0;
+                        energiaConsumida = lfin >= lini ? (lfin - lini) : 0;
+                    } else {
+                        // Auxiliares: Consumida = Suma de amperaje por hora (igual a la producida)
+                        energiaConsumida = sumaAmperaje;
+                    }
+                    
+                    const diesel = eqData.diesel || 0;
+                    const ef = (diesel > 0 && energiaProducida > 0) ? (energiaProducida / diesel).toFixed(2) : '0.00';
+                    
+                    html += `
+                    <div class="print-card" style="border:2px solid var(--primary-color); border-radius:12px; padding:15px; margin-bottom:20px; page-break-inside: avoid;">
+                        <h3 style="background:var(--primary-color); color:#fff; padding:10px; margin:-15px -15px 15px -15px; border-radius:10px 10px 0 0;">${eq}</h3>
+                        
+                        <div style="display:grid; grid-template-columns: repeat(${isAux ? 2 : 4}, 1fr); gap:10px; margin-bottom:15px; font-size:12px; text-align:center;">
+                            <div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px;"><b>H. Inicio:</b><br>${eqData.hini || '-'}</div>
+                            <div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px;"><b>H. Fin:</b><br>${eqData.hfin || '-'}</div>
+                            ${isAux ? '' : `
+                            <div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px;"><b>Lec. Inicio:</b><br>${eqData.lini || '-'}</div>
+                            <div style="border:1px solid #e2e8f0; padding:8px; border-radius:6px;"><b>Lec. Fin:</b><br>${eqData.lfin || '-'}</div>
+                            `}
+                        </div>
+                        
+                        <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; margin-bottom:15px; text-align:center;">
+                            <div style="background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:6px; color:#991b1b;">
+                                <span style="font-size:10px; font-weight:700;">TOTAL HO</span><br>
+                                <span style="font-size:16px; font-weight:900;">${Number(eqData.ho).toFixed(1)} h</span>
+                            </div>
+                            <div style="background:#fffbeb; border:1px solid #fde68a; padding:10px; border-radius:6px; color:#92400e;">
+                                <span style="font-size:10px; font-weight:700;">DIÉSEL</span><br>
+                                <span style="font-size:16px; font-weight:900;">${diesel} gal</span>
+                            </div>
+                            <div style="background:#fefce8; border:1px solid #fef08a; padding:10px; border-radius:6px; color:#854d0e;">
+                                <span style="font-size:10px; font-weight:700;">ENERGÍA CONSUMIDA</span><br>
+                                <span style="font-size:16px; font-weight:900;">${energiaConsumida.toFixed(1)} kWh</span>
+                            </div>
+                            <div style="background:#EAF4F5; padding:10px; border-radius:6px;">
+                                <span style="font-size:10px; color:var(--primary-color); font-weight:700;">ENERGÍA PRODUCIDA</span><br>
+                                <span style="font-size:16px; font-weight:900;">${energiaProducida.toFixed(1)} kWh</span>
+                            </div>
+                            <div style="background:#EAF6F6; padding:10px; border-radius:6px; color:#006972;">
+                                <span style="font-size:10px; font-weight:700;">EFICIENCIA</span><br>
+                                <span style="font-size:16px; font-weight:900;">${ef}</span>
+                            </div>
+                        </div>
+                        
+                        <h4 style="margin:0 0 10px 0; font-size:13px; border-bottom:1px solid #ccc; padding-bottom:5px;">Registro Operacional (Hora por Hora)</h4>
+                        <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:center;">
+                            <tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Hora</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">P. Aceite</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">T. Refrig</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">RPM</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Frec.</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Amp.</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">FP</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Potencia (kW)</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Carga (%)</th>
+                                <th style="padding:6px; border:1px solid #e2e8f0;">Estado</th>
+                            </tr>
+                            ${eqOps.length === 0 ? `<tr><td colspan="10" style="padding:10px; border:1px solid #e2e8f0;">Sin registros detallados en este día</td></tr>` : eqOps.map(op => {
+                                const fpUsar = (op.factor_potencia && op.factor_potencia > 0) ? op.factor_potencia : spec.fp;
+                                const kw = op.amperaje ? (1.732 * spec.tension * op.amperaje * fpUsar) / 1000 : 0;
+                                const fc = kw ? (kw / spec.efectiva) * 100 : 0;
+                                let color = "inherit";
+                                let estado = "Apagado";
+                                if(fc > 0 && fc < 40) { color = "#fee2e2"; estado = "Subcarga"; }
+                                else if(fc >= 40 && fc < 75) { color = "#fef3c7"; estado = "Normal"; }
+                                else if(fc >= 75) { color = "#dcfce3"; estado = "Óptimo"; }
+                                
+                                return `<tr style="background:${color};">
+                                    <td style="padding:4px; border:1px solid #e2e8f0; font-weight:700;">${op.hora}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.p_aceite || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.t_refrig || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.vel_mtr || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.frecuencia || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.amperaje || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0;">${op.factor_potencia || '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0; font-weight:700;">${kw ? kw.toFixed(1) : '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0; font-weight:700;">${fc ? fc.toFixed(1)+'%' : '-'}</td>
+                                    <td style="padding:4px; border:1px solid #e2e8f0; font-weight:700;">${estado}</td>
+                                </tr>`;
+                            }).join('')}
+                        </table>
+                        ${eqOps.length > 0 ? `<div style="margin-top:20px; height:220px; position:relative;"><canvas id="chart_${eqId}"></canvas></div>` : ''}
+                    </div>`;
+                    
+                    if (eqOps.length > 0) {
+                        chartConfigs.push({
+                            id: `chart_${eqId}`,
+                            labels: eqOps.map(op => op.hora),
+                            data: eqOps.map(op => op.amperaje || 0)
+                        });
+                    }
+                });
+                
+                // Add Signature to PDF
+                html += `<div style="margin-top: 40px; text-align:right; font-size:12px; color:var(--text-muted);">
+                    <p><b>Elaborado por:</b> ${window.activeOperatorName || 'Operador Autorizado'}</p>
+                    <p>Generado el: ${new Date().toLocaleString('es-PE')}</p>
+                </div>`;
+                
+                if (html.indexOf('print-card') === -1) {
+                    html += `<p style="text-align:center; padding:30px;">No hay equipos registrados con horas de operación en esta fecha.</p>`;
+                }
+                
+                body.innerHTML = html;
+                
+                chartConfigs.forEach(conf => {
+                    const ctx = document.getElementById(conf.id);
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: conf.labels,
+                                datasets: [{
+                                    label: 'Amperaje (A)',
+                                    data: conf.data,
+                                    borderColor: '#55C2D2',
+                                    backgroundColor: 'rgba(85, 194, 210, 0.2)',
+                                    borderWidth: 2,
+                                    tension: 0.3,
+                                    fill: true,
+                                    pointRadius: 4,
+                                    pointBackgroundColor: '#fff',
+                                    pointBorderColor: '#55C2D2',
+                                    pointBorderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    title: { display: true, text: 'Curva de Amperaje', font: {size: 13} }
+                                },
+                                scales: {
+                                    y: { beginAtZero: true, title: { display: true, text: 'Amperaje (A)' } },
+                                    x: { title: { display: true, text: 'Hora' } }
+                                }
+                            }
+                        });
+                    }
+                });
+                
+            } catch (err) {
+                console.error(err);
+                body.innerHTML = `<p style="color:red; text-align:center;">Error al generar el reporte.</p>`;
+            }
+        }
+
+        currentModals.forEach(m => { 
+            document.getElementById(`${m}BtnChart`).onclick = () => openCharts(m.toUpperCase()); 
+            document.getElementById(`${m}BtnExport`).onclick = () => handleExportExcel(m.toUpperCase());
+        });
+        document.getElementById('cfBtnChart').onclick = () => {
+            // Set current month to filter by default if empty
+            const filter = document.getElementById('chartMonthFilter');
+            if(!filter.value) {
+                const now = new Date();
+                filter.value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+            }
+            openCharts('CASA_FUERZA');
+        };
+        document.getElementById('cfBtnPrintDaily').onclick = () => generateDailyReport();
+
+        document.getElementById('btnRealExportExcelDaily').onclick = () => exportDailyExcel(document.getElementById('cf-fecha').value);
+        
+        async function exportDailyExcel(fecha) {
+            if(!fecha) { alert('Seleccione una fecha primero.'); return; }
+            alert('Generando Excel del da ' + fecha + '...');
+            try {
+                const {data: dailyData} = await supabaseClient.from('casa_fuerza_diario').select('*').eq('fecha', fecha);
+                const {data: opsData} = await supabaseClient.from('datos_operacionales').select('*').eq('fecha', fecha);
+                
+                if (!dailyData || dailyData.length === 0) {
+                    alert('No hay datos para esta fecha.'); return;
+                }
+                
+                const dayRow = dailyData[0];
+                const equiposJson = dayRow.equipos_json || [];
+                const auxJson = dayRow.auxiliares_json || [];
+                const allEq = [...equiposJson, ...auxJson];
+                
+                if(allEq.length === 0) {
+                    alert('No hay equipos registrados en esta fecha.'); return;
+                }
+
+                if (typeof XLSX === 'undefined') {
+                    throw new Error("La librera XLSX no se carg correctamente.");
+                }
+
+                const wb = XLSX.utils.book_new();
+
+                for(let eq of allEq) {
+                    const eqName = eq.nombre || 'Equipo Desconocido';
+                    // Obtener spec para factor potencia y tension
+                    let tension = 440;
+                    let fp = 0.85;
+                    const n = eqName.toUpperCase();
+                    if (n.includes("MITSUBISHI")) { tension = 440; fp = 0.85; }
+                    else if (n.includes("VOLVO")) { tension = 440; fp = 0.85; }
+                    else if (n.includes("CUMMINS")) { tension = 440; fp = 0.85; }
+                    else if (n.includes("CATERPILLAR") || n.includes("CAT")) { tension = 440; fp = 0.85; }
+                    else if (n.includes("PERKINS")) { tension = 220; fp = 0.85; }
+                    
+                    const mIdx = cfMotores.indexOf(eqName);
+                    const aIdx = cfMotoresAux.indexOf(eqName);
+                    const eqId = mIdx !== -1 ? `mot_${mIdx}` : (aIdx !== -1 ? `motaux_${aIdx}` : eqName);
+                    
+                    const eqOps = opsData.filter(o => o.equipo_id === eqId || o.equipo_id === eqName).sort((a,b) => a.hora.localeCompare(b.hora));
+                    
+                    const aoa = [];
+                    // Title row
+                    aoa.push([eqName]);
+                    // Empty row
+                    aoa.push([]);
+                    // Headers
+                    aoa.push([
+                        'Hora', 
+                        'Pres. Aceite (psi)', 
+                        'T Agua (C)', 
+                        'Velocidad (rpm)', 
+                        'Frecuencia (Hz)', 
+                        'Amperaje (A)', 
+                        'Factor P. (Cos φ)', 
+                        'Energa (kWh)'
+                    ]);
+                    
+                    // 24 hours
+                    for(let i=1; i<=24; i++) {
+                        const hrStr = i.toString().padStart(2,'0') + ':00';
+                        const opHr = eqOps.find(o => o.hora === hrStr);
+                        if (opHr) {
+                            let energia = 0;
+                            if (opHr.amperaje != null) {
+                                const fpUsar = (opHr.factor_potencia && opHr.factor_potencia > 0) ? opHr.factor_potencia : fp;
+                                energia = (1.732 * tension * opHr.amperaje * fpUsar) / 1000;
+                            }
+                            aoa.push([
+                                hrStr,
+                                opHr.p_aceite != null ? opHr.p_aceite : '',
+                                opHr.t_refrig != null ? opHr.t_refrig : '',
+                                opHr.rpm != null ? opHr.rpm : '',
+                                opHr.frecuencia != null ? opHr.frecuencia : '',
+                                opHr.amperaje != null ? opHr.amperaje : '',
+                                opHr.factor_potencia != null ? opHr.factor_potencia : '',
+                                energia > 0 ? parseFloat(energia.toFixed(2)) : ''
+                            ]);
+                        } else {
+                            aoa.push([hrStr, '', '', '', '', '', '', '']);
+                        }
+                    }
+                    
+                    const ws = XLSX.utils.aoa_to_sheet(aoa);
+                    // Merge title
+                    if(!ws['!merges']) ws['!merges'] = [];
+                    ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } });
+                    
+                    // Column widths
+                    ws['!cols'] = [
+                        {wpx: 60},  // Hora
+                        {wpx: 120}, // P. Aceite
+                        {wpx: 100}, // T Agua
+                        {wpx: 100}, // RPM
+                        {wpx: 100}, // Hz
+                        {wpx: 100}, // Amperaje
+                        {wpx: 120}, // Factor P
+                        {wpx: 100}  // Energia
+                    ];
+                    
+                    // Add sheet (truncate name to 31 chars max)
+                    let sheetName = eqName.substring(0, 31).replace(/[\[\]\*\?\/\:\\]/g, '');
+                    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                }
+                
+                XLSX.writeFile(wb, `Reporte_Diario_CASA_FUERZA_${fecha}.xlsx`);
+                
+            } catch(e) {
+                console.error(e);
+                alert('Error al generar Excel: ' + e.message);
+            }
+        }
+
+
+        // 10. LOGICA TOGGLE PESCA
+        function setupPescaToggle(radioName, prefix, equipMap, alertId) {
+            const radios = document.getElementsByName(radioName);
+            const alertEl = document.getElementById(alertId);
+            radios.forEach(r => {
+                r.addEventListener('change', () => {
+                    const noPesca = (r.value === 'no');
+                    if (alertEl) alertEl.classList.toggle('d-none', !noPesca);
+                    if (noPesca) {
+                        Object.keys(equipMap).forEach((sys, sIdx) => {
+                            equipMap[sys].forEach((name, eIdx) => {
+                                const uid = `${prefix}${sIdx}_${eIdx}`;
+                                ['HO','HMP','HC'].forEach(t => {
+                                    const h = document.getElementById(`eq_${uid}_${t}_h`);
+                                    const m = document.getElementById(`eq_${uid}_${t}_m`);
+                                    if(h) h.value = '00'; if(m) m.value = '00';
+                                });
+                                recalculateHours(uid);
+                            });
+                        });
+                    }
+                });
+            });
+        }
+        setupPescaToggle('hayPesca', 'ch_', chmuraEquips, 'no-pesca-alert');
+        setupPescaToggle('cpseHayPesca', 'cpse_', cpseEquips, 'cpse-no-pesca-alert');
+        setupPescaToggle('ggeePesca', 'ggee_', {"GGEE": ggeeList}, null);
+        setupPescaToggle('rsPesca', 'rs_', {"RS": rsList}, null);
+
+        // SETUP LOGIN DNI
+        const loginDniInput = document.getElementById('login-dni');
+        const btnLoginCF = document.getElementById('btnLoginCF');
+        window.activeOperatorName = '';
+
+        if (loginDniInput && typeof attachNumpad === 'function') {
+            attachNumpad(loginDniInput, 'Ingrese DNI', () => btnLoginCF.click());
+        }
+
+        if (btnLoginCF) {
+            btnLoginCF.addEventListener('click', async () => {
+                const dni = loginDniInput.value.trim();
+                if (!dni) return alert('Ingrese su número de DNI');
+                btnLoginCF.textContent = 'Verificando...';
+                
+                try {
+                    const { data, error } = await supabaseClient.from('operadores').select('nombre').eq('dni', dni).single();
+                    if (error || !data) {
+                        alert('DNI no autorizado o error de conexión.');
+                        btnLoginCF.textContent = 'Ingresar';
+                    } else {
+                        window.activeOperatorName = data.nombre;
+                        btnLoginCF.textContent = 'Ingresar';
+                        loginDniInput.value = '0'; // Clean for next time
+                        navigateTo('casafuerza', 'Registro de Casa Fuerza', true);
+                    }
+                } catch (err) {
+                    alert('Error al verificar DNI');
+                    btnLoginCF.textContent = 'Ingresar';
+                }
+            });
+        }
+
+        navigateTo('main', 'Menú Principal', false);
+        console.log("COPEINCA Premium Ready.");
+    });
+    </script>
+    <style>
+    /* --- PRINT STYLES FOR PDF --- */
+    @media print {
+        @page { size: portrait; margin: 10mm; }
+        html, body {
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            box-sizing: border-box !important;
+        }
+        body > *:not(#chartModalOverlay):not(#dailyReportModalOverlay) { 
+            display: none !important; 
+        }
+        /* Make overlays static instead of absolute to fit page width correctly */
+        #chartModalOverlay, #dailyReportModalOverlay { 
+            display: block !important; 
+            position: static !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important; 
+            background: transparent !important;
+            overflow: visible !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .chart-modal-content { 
+            box-shadow: none !important; 
+            border: none !important; 
+            width: 100% !important; 
+            max-width: 100% !important; 
+            margin: 0 !important; 
+            padding: 0 !important;
+            overflow: hidden !important;
+        }
+        #chartModalClose, #btnDownloadPDF, #dailyReportModalClose, #btnRealPrintDaily, #btnRealExportExcelDaily { 
+            display: none !important; 
+        }
+        .chart-card, .print-card { 
+            page-break-inside: avoid !important; 
+            break-inside: avoid !important; 
+            border: 1px solid #ddd !important; 
+            margin-bottom: 20px !important; 
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        table {
+            width: 100% !important;
+            max-width: 100% !important;
+            font-size: 10px !important;
+            table-layout: fixed !important;
+            border-collapse: collapse !important;
+        }
+        th, td {
+            padding: 4px !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+        /* Ensure canvas resizes */
+        canvas {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        /* Force background colors */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+      }
+    [title] { cursor: help; }
+    </style>
+    <!-- MODAL DE REGISTRO OPERACIONAL -->
+    <div id="operacional-modal" class="chart-modal-overlay" style="display: none;" onclick="if(event.target===this) closeOperationalModal()">
+        <div class="chart-modal-content" style="max-width: 95vw; width: 900px; padding: 0; overflow: hidden;" onclick="event.stopPropagation()">
+            <!-- HEADER con paleta COPEINCA -->
+            <div style="background: var(--primary-color); padding: 14px 16px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h3 style="color: #fff; font-size: 15px; font-weight: 800; margin:0;" id="operacional-title">Registro Operacional</h3>
+                    <div style="color: #55C2D2; font-size: 11px; margin-top:2px;">7 parámetros por hora · 24 registros diarios</div>
+                </div>
+                <button class="btn-back" style="background: rgba(255,255,255,0.15); color: #fff; border:none; border-radius:8px; padding:6px 10px; font-size:16px;" onclick="closeOperationalModal()">✕</button>
+            </div>
+            
+            <!-- Divider cyan -->
+            <div style="height: 3px; background: #55C2D2;"></div>
+
+            <div style="padding: 12px 16px;">
+                <div style="background:#EAF4F5; border-left:3px solid var(--accent-color); padding: 8px 12px; font-size: 11px; color:var(--primary-color); margin-bottom: 12px; border-radius:0 8px 8px 0;">
+                    💡 Solo complete los parámetros de las horas en las que el equipo estuvo encendido. Puede dejar en blanco las demás.
+                </div>
+                
+                <div id="operacional-grid" style="max-height: 55vh; overflow-y: auto; overflow-x: auto;">
+                    <!-- Generado por JS -->
+                </div>
+                
+                <div style="margin-top: 14px; display: flex; gap: 8px;">
+                    <button type="button" class="btn" style="flex: 1; background: var(--bg-input); color: var(--text-muted); border: 1px solid var(--border-color);" onclick="closeOperationalModal()">Cancelar</button>
+                    <button type="button" class="btn primary-btn" style="flex: 2; padding: 12px; background: var(--primary-color);" onclick="saveOperationalData()">💾 Guardar Datos Operacionales</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    // app_operacional.js — Registro de Datos Operacionales (7 parámetros)
+    const VOLTAJE_NOMINAL = 440; // Voltaje por defecto — modificar si se confirma otro valor
+
+    let currentOpEquipoId = null;
+    let currentOpNombre = null;
+
+    const opModal = document.getElementById('operacional-modal');
+    const opGrid  = document.getElementById('operacional-grid');
+    const opTitle = document.getElementById('operacional-title');
+
+    // ─── ABRIR MODAL ─────────────────────────────────────────────────────────────
+    async function openOperationalModal(nombre, equipoId) {
+        currentOpNombre   = nombre;
+        currentOpEquipoId = equipoId;
+
+        const dateInput = document.getElementById('cf-fecha').value;
+        if (!dateInput) {
+            alert('Por favor seleccione una fecha primero en el Registro Diario.');
+            return;
+        }
+
+        opTitle.textContent = `Registro Operacional — ${nombre}`;
+        opModal.style.display = 'block';
+        opGrid.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);">Cargando datos...</div>';
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('datos_operacionales')
+                .select('*')
+                .eq('fecha', dateInput)
+                .eq('equipo_id', equipoId);
+
+            if (error) throw error;
+            renderOperationalGrid(data || []);
+        } catch (e) {
+            console.error('Error al obtener datos operacionales:', e);
+            opGrid.innerHTML = '<div style="text-align:center;padding:24px;color:#E53935;">Error al cargar. Revise la consola.</div>';
+        }
+    }
+
+    // ─── CERRAR MODAL ─────────────────────────────────────────────────────────────
+    function closeOperationalModal() {
+        opModal.style.display = 'none';
+        currentOpEquipoId = null;
+        currentOpNombre   = null;
+    }
+
+    // ─── RENDERIZAR TABLA 24h × 7 PARÁMETROS ─────────────────────────────────────
+    function renderOperationalGrid(existingData) {
+        opGrid.innerHTML = '';
+
+        const dataMap = {};
+        existingData.forEach(row => { dataMap[row.hora] = row; });
+
+        const cols = [
+            { key: 'p_aceite',        label: 'Pres. Aceite', unit: 'psi',    cls: 'op-paceite' },
+            { key: 't_refrig',        label: 'T° Agua',      unit: '°C',     cls: 'op-tagua'   },
+            { key: 'vel_mtr',         label: 'Velocidad',    unit: 'rpm',    cls: 'op-rpm'     },
+            { key: 'frecuencia',      label: 'Frecuencia',   unit: 'Hz',     cls: 'op-hz'      },
+            { key: 'amperaje',        label: 'Amperaje',     unit: 'A',      cls: 'op-amp'     },
+            { key: 'factor_potencia', label: 'Factor P.',    unit: 'Cos φ',  cls: 'op-fp'      },
+            { key: 'energia',         label: 'Energía',      unit: 'KWH',    cls: 'op-kwh'     },
+        ];
+
+        // ── Wrapper scrollable ───────────────────────────────────────────────────
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'overflow-x:auto;';
+
+        const table = document.createElement('table');
+        table.style.cssText = 'min-width:720px;width:100%;border-collapse:collapse;font-size:11px;';
+
+        // ── Header ───────────────────────────────────────────────────────────────
+        const thead = document.createElement('thead');
+        let thHTML = `<tr style="background:#00363B; color:#fff; position:sticky; top:0; z-index:3;">
+            <th style="padding:8px 6px; text-align:center; min-width:52px; position:sticky; left:0; background:#00363B; border-right:2px solid #55C2D2;">Hora</th>`;
+        cols.forEach(c => {
+            thHTML += `<th style="padding:8px 6px; text-align:center; min-width:80px; border-left:1px solid #00616B;">
+                <div style="font-size:10px; font-weight:700;">${c.label}</div>
+                <div style="font-size:9px; color:#55C2D2; font-weight:400;">${c.unit}</div>
+            </th>`;
+        });
+        thHTML += '</tr>';
+        thead.innerHTML = thHTML;
+        table.appendChild(thead);
+
+        // ── Body ─────────────────────────────────────────────────────────────────
+        const tbody = document.createElement('tbody');
+        for (let i = 1; i <= 24; i++) {
+            const hVal = i === 24 ? 0 : i;
+            const horaStr  = hVal.toString().padStart(2, '0') + ':00';
+            const rowData  = dataMap[horaStr] || {};
+            const isEven   = i % 2 === 0;
+
+            const tr = document.createElement('tr');
+            tr.style.background = isEven ? '#ffffff' : '#f4f8f8';
+
+            let tdHTML = `<td style="padding:4px 6px; text-align:center; font-weight:700; color:#00363B;
+                                font-size:12px; position:sticky; left:0; background:${isEven?'#ffffff':'#f4f8f8'};
+                                border-right:2px solid #55C2D2;">${horaStr}</td>`;
+
+            cols.forEach(c => {
+                const val = rowData[c.key] != null ? rowData[c.key] : '';
+                tdHTML += `<td style="padding:3px 4px; border-left:1px solid #e2e8f0;">
+                    <input type="text" class="hm-input ${c.cls}" data-hora="${horaStr}" data-key="${c.key}"
+                        value="${val}"
+                        style="width:100%; padding:4px; font-size:11px; text-align:center;
+                               background:#EAF4F5; border:1px solid #55C2D2; border-radius:6px;">
+                </td>`;
+            });
+
+            tr.innerHTML = tdHTML;
+            tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        wrap.appendChild(table);
+        opGrid.appendChild(wrap);
+
+        // ── Attach numpad ────────────────────────────────────────────────────────
+        setTimeout(() => {
+            if (typeof window.attachNumpad !== 'function') return;
+            const allInputs = tbody.querySelectorAll('input');
+            allInputs.forEach((inp, idx) => {
+                const next  = allInputs[idx + 1];
+                const hora  = inp.getAttribute('data-hora');
+                const key   = inp.getAttribute('data-key');
+                const col   = cols.find(c => c.cls === inp.classList[1]);
+                const label = col ? `${col.label} (${col.unit}) — ${hora}` : hora;
+                window.attachNumpad(inp, label, () => { if (next) next.click(); });
+            });
+        }, 100);
+    }
+
+    // ─── GUARDAR DATOS ────────────────────────────────────────────────────────────
+    async function saveOperationalData() {
+        if (!currentOpEquipoId) return;
+
+        const dateInput = document.getElementById('cf-fecha').value;
+        const btn = document.querySelector('#operacional-modal .primary-btn');
+        const origText = btn.textContent;
+        btn.textContent = 'Guardando…';
+        btn.disabled = true;
+
+        try {
+            const tbody = opGrid.querySelector('tbody');
+            if (!tbody) { alert('No hay datos para guardar.'); return; }
+
+            const upserts = [];
+            tbody.querySelectorAll('tr').forEach(tr => {
+                const firstInput = tr.querySelector('input');
+                if (!firstInput) return;
+
+                const hora = firstInput.getAttribute('data-hora');
+                const rowData = {
+                    fecha:        dateInput,
+                    equipo_id:    currentOpEquipoId,
+                    hora:         hora,
+                    voltaje:      VOLTAJE_NOMINAL,
+                };
+
+                let hasValue = false;
+                tr.querySelectorAll('input').forEach(inp => {
+                    const key = inp.getAttribute('data-key');
+                    const val = parseFloat(inp.value);
+                    rowData[key] = isNaN(val) ? null : val;
+                    if (!isNaN(val)) hasValue = true;
+                });
+
+                if (hasValue) {
+                    upserts.push(
+                        supabaseClient
+                            .from('datos_operacionales')
+                            .upsert(rowData, { onConflict: 'fecha, equipo_id, hora' })
+                    );
+                }
+            });
+
+            if (upserts.length === 0) {
+                alert('No se ingresaron valores nuevos para guardar.');
+                return;
+            }
+
+            const results = await Promise.all(upserts);
+            const errors  = results.filter(r => r.error);
+            if (errors.length > 0) {
+                console.error('Errores al guardar:', errors);
+                alert(`⚠️ ${errors.length} fila(s) con error. Error: ${errors[0].error.message || JSON.stringify(errors[0].error)}`);
+            } else {
+                alert(`✅ ${upserts.length} registro(s) guardados correctamente.`);
+                closeOperationalModal();
+            }
+        } catch (e) {
+            console.error('Error guardando datos operacionales:', e);
+            alert('❌ Error inesperado: ' + e.message);
+        } finally {
+            btn.textContent = origText;
+            btn.disabled = false;
+        }
+    }
+    </script>
+</body>
+</html>
+
