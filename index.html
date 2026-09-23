@@ -1351,7 +1351,7 @@ textarea:focus {
         }
 
         document.getElementById('btn-go-disponibilidad')?.addEventListener('click', () => navigateTo('disponibilidad', 'Disponibilidad', true));
-        document.getElementById('btn-go-casafuerza')?.addEventListener('click', () => navigateTo('logincf', 'Control de Acceso', true));
+        document.getElementById('btn-go-casafuerza')?.addEventListener('click', () => navigateTo('casafuerza', 'Registro de Casa Fuerza', true));
         document.getElementById('btn-go-chmura')?.addEventListener('click', () => navigateTo('chmura', 'Registro CH-MU-RA', true));
         document.getElementById('btn-go-cpse')?.addEventListener('click', () => navigateTo('cpse', 'Registro CP-SE', true));
         document.getElementById('btn-go-ggee')?.addEventListener('click', () => navigateTo('ggee', 'Registro GGEE', true));
@@ -3535,7 +3535,7 @@ eqNames.forEach((eq, idx) => {
         // SETUP LOGIN DNI
         const loginDniInput = document.getElementById('login-dni');
         const btnLoginCF = document.getElementById('btnLoginCF');
-        window.activeOperatorName = '';
+        window.activeOperatorName = 'Operador de Turno';
 
         if (loginDniInput && typeof attachNumpad === 'function') {
             attachNumpad(loginDniInput, 'Ingrese DNI', () => btnLoginCF.click());
